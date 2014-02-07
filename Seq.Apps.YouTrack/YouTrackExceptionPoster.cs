@@ -38,7 +38,7 @@ namespace Seq.Apps.YouTrack
         {
             this.EnsureInitalized();
 
-            if (string.IsNullOrWhiteSpace(@event.Data.Exception))
+            if (!@event.Data.Exception.IsSet())
             {
                 this.Log.Information("Cannot send event that does not have exception data.");
                 return;
