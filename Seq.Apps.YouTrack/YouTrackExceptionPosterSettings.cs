@@ -34,7 +34,7 @@ namespace Seq.Apps.YouTrack
         ///     The port.
         /// </value>
         [SeqAppSetting(
-            DisplayName = "Port (number)",
+            DisplayName = "Port",
             IsOptional = true,
             HelpText = "Default is 80. Change if the YouTrack Port is different.")]
         public int? Port { get; set; }
@@ -46,7 +46,7 @@ namespace Seq.Apps.YouTrack
         ///     true if use ssl, false if not.
         /// </value>
         [SeqAppSetting(
-            DisplayName = "UseSSL (bool)",
+            DisplayName = "Use SSL",
             IsOptional = true,
             HelpText = "Defaults to false. Change to true if SSL (https) is required.")]
         public bool UseSSL { get; set; }
@@ -70,7 +70,7 @@ namespace Seq.Apps.YouTrack
         ///     The name of the project.
         /// </value>
         [SeqAppSetting(
-            DisplayName = "ProjectName",
+            DisplayName = "Project name",
             IsOptional = false,
             HelpText = "Project name to post YouTrack issue.")]
         public string ProjectName { get; set; }
