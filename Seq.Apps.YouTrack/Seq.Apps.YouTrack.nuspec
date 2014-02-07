@@ -1,0 +1,21 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Seq.Apps.YouTrack</id>
+    <version>0.1.0</version>
+    <authors>CaptiveAire Systems</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/CaptiveAire/Seq.Apps.YouTrack</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <tags>seq-app youtrack</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\Seq.Apps.YouTrack.dll" target="lib\net45" />
+    <file src="bin\Release\Seq.Apps.YouTrack.pdb" target="lib\net45" />
+    <file src="bin\Release\EasyHttp.dll" target="lib\net45" />
+    <file src="bin\Release\JsonFx.dll" target="lib\net45" />
+    <file src="bin\Release\YouTrackSharp.dll" target="lib\net45" />
+  </files>
+</package>
