@@ -9,6 +9,7 @@
     <language>en-US</language>
     <projectUrl>https://github.com/CaptiveAire/Seq.Apps.YouTrack</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <iconUrl>http://raw2.github.com/CaptiveAire/Seq.Apps.YouTrack/master/asset/seq-app-youtrack.png</iconUrl>
     <tags>seq-app youtrack</tags>
   </metadata>
   <files>
