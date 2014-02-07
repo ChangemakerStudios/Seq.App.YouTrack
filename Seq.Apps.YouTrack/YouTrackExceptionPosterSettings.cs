@@ -25,13 +25,7 @@ namespace Seq.Apps.YouTrack
         [SeqAppSetting(
             DisplayName = "Host (url)",
             HelpText = "URL of the YouTrack instance (do not include http:// or path).")]
-        public string Host
-        {
-            get
-            {
-                return this.App.GetSetting<string>("Host");
-            }
-        }
+        public string Host { get; set; }
 
         /// <summary>
         ///     Gets the port.
@@ -43,13 +37,7 @@ namespace Seq.Apps.YouTrack
             DisplayName = "Port (number)",
             IsOptional = true,
             HelpText = "Default is 80. Change if the YouTrack Port is different.")]
-        public int Port
-        {
-            get
-            {
-                return this.App.GetSetting<int>("Port", 80);
-            }
-        }
+        public int? Port { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether this object use ssl.
@@ -61,13 +49,7 @@ namespace Seq.Apps.YouTrack
             DisplayName = "UseSSL (bool)",
             IsOptional = true,
             HelpText = "Defaults to false. Change to true if SSL (https) is required.")]
-        public bool UseSSL
-        {
-            get
-            {
-                return this.App.GetSetting<bool>("UseSSL", false);
-            }
-        }
+        public bool UseSSL { get; set; }
 
         /// <summary>
         ///     Gets the full pathname of the file.
@@ -79,13 +61,7 @@ namespace Seq.Apps.YouTrack
             DisplayName = "Path",
             IsOptional = true,
             HelpText = "Defaults to none. Additional path on YouTrack URL.")]
-        public string Path
-        {
-            get
-            {
-                return this.App.GetSetting<string>("Path", null);
-            }
-        }
+        public string Path { get; set; }
 
         /// <summary>
         ///     Gets the name of the project.
@@ -97,13 +73,7 @@ namespace Seq.Apps.YouTrack
             DisplayName = "ProjectName",
             IsOptional = false,
             HelpText = "Project name to post YouTrack issue.")]
-        public string ProjectName
-        {
-            get
-            {
-                return this.App.GetSetting<string>("ProjectName");
-            }
-        }
+        public string ProjectName { get; set; }
 
         /// <summary>
         ///     Gets the username.
@@ -115,13 +85,7 @@ namespace Seq.Apps.YouTrack
             DisplayName = "Username",
             IsOptional = false,
             HelpText = "Authenticated username for YouTrack.")]
-        public string Username
-        {
-            get
-            {
-                return this.App.GetSetting<string>("Username");
-            }
-        }
+        public string Username { get; set; }
 
         /// <summary>
         ///     Gets the password.
@@ -133,12 +97,6 @@ namespace Seq.Apps.YouTrack
             DisplayName = "Password",
             IsOptional = false,
             HelpText = "Authenticated username for YouTrack.")]
-        public string Password
-        {
-            get
-            {
-                return this.App.GetSetting<string>("Password");
-            }
-        }
+        public string Password { get; set; }
     }
 }
