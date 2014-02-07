@@ -96,7 +96,8 @@ namespace Seq.Apps.YouTrack
         [SeqAppSetting(
             DisplayName = "Password",
             IsOptional = false,
-            HelpText = "Authenticated username for YouTrack.")]
+            HelpText = "Authenticated username for YouTrack.",
+            InputType = SettingInputType.Password)]
         public string Password { get; set; }
     }
 }

@@ -38,9 +38,9 @@
     <Reference Include="JsonFx">
       <HintPath>..\packages\JsonFx.2.0.1209.2802\lib\net40\JsonFx.dll</HintPath>
     </Reference>
-    <Reference Include="Seq.Apps, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Seq.Apps, Version=0.10.8.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Seq.Apps.0.10.2\lib\net45\Seq.Apps.dll</HintPath>
+      <HintPath>..\packages\Seq.Apps.0.10.8\lib\net45\Seq.Apps.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=1.2.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
