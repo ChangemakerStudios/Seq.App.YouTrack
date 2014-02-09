@@ -26,18 +26,11 @@ namespace Seq.Apps.YouTrack
     public partial class YouTrackExceptionPoster : Reactor, ISubscribeTo<LogEventData>
     {
         /// <summary>
-        /// true if this object is initialized.
-        /// </summary>
-        private bool _isInitialized = false;
-
-        /// <summary>
         /// Ons the given event.
         /// </summary>
         /// <param name="event"> The event.</param>
         public void On(Event<LogEventData> @event)
         {
-            this.EnsureInitalized();
-
             if (!@event.Data.Exception.IsSet())
             {
                 this.Log.Information("Cannot send event that does not have exception data.");
@@ -47,7 +40,7 @@ namespace Seq.Apps.YouTrack
             try
             {
                 // have exceptions -- throw to YouTrack...
-                var connection = new Connection(this.Host, this.Port, this.UseSSL, this.Path);
+                var connection = new Connection(this.Host, this.Port ?? 80, this.UseSSL, this.Path);
 
                 if (this.Username.IsSet() && this.Password.IsSet())
                 {
@@ -78,18 +71,6 @@ namespace Seq.Apps.YouTrack
             {
                 // failure creating issue
                 this.Log.Error(ex, "Unable to connect to YouTrack to create exception.");
-            }
-        }
-
-
-        /// <summary>
-        /// Ensures that initalized.
-        /// </summary>
-        private void EnsureInitalized()
-        {
-            if (!this._isInitialized)
-            {
-                this._isInitialized = true;
             }
         }
     }
