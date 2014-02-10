@@ -37,18 +37,15 @@ namespace Seq.Apps.YouTrack
                 return;
             }
 
+            var issueManagement = this.GetIssueManagement();
+
+            if (issueManagement == null)
+            {
+                return;
+            }
+
             try
             {
-                // have exceptions -- throw to YouTrack...
-                var connection = new Connection(this.Host, this.Port ?? 80, this.UseSSL, this.Path);
-
-                if (this.Username.IsSet() && this.Password.IsSet())
-                {
-                    connection.Authenticate(this.Username, this.Password);
-                }
-
-                var issueManagement = new IssueManagement(connection);
-
                 dynamic issue = new Issue();
 
                 issue.Summary = @event.Data.RenderedMessage;
@@ -63,15 +60,41 @@ namespace Seq.Apps.YouTrack
 
                 string issueNumber = issueManagement.CreateIssue(issue);
 
-                issueManagement.ApplyCommand(issueNumber, "add tag Seq", "");
+                if (issueNumber.IsSet())
+                {
+                    this.Log.Information("Issue #{0} Posted to YouTrack", issueNumber);
 
-                this.Log.Information("Issue #{0} Posted to YouTrack", issueNumber);
+                    issueManagement.ApplyCommand(issueNumber, "comment", string.Format("Posted from Seq. Event Timestamp UTC: {0}", @event.TimestampUtc));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                // failure creating issue
+                this.Log.Error(ex, "Can't Create Issue on YouTrack.");
+            }
+        }
+
+        private IssueManagement GetIssueManagement()
+        {
+            try
+            {
+                // have exceptions -- throw to YouTrack...
+                var connection = new Connection(this.Host, this.Port ?? 80, this.UseSSL, this.Path);
+
+                if (this.Username.IsSet() && this.Password.IsSet())
+                {
+                    connection.Authenticate(this.Username, this.Password);
+                }
+
+                return new IssueManagement(connection);
             }
             catch (System.Exception ex)
             {
                 // failure creating issue
                 this.Log.Error(ex, "Unable to connect to YouTrack to create exception.");
             }
+
+            return null;
         }
     }
 }
