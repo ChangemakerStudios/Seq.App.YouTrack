@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Seq.Apps.YouTrack")]
+[assembly: AssemblyTitle("Seq.App.YouTrack")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Seq.Apps.YouTrack")]
+[assembly: AssemblyProduct("Seq.App.YouTrack")]
 [assembly: AssemblyCopyright("Copyright CaptiveAire © 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
