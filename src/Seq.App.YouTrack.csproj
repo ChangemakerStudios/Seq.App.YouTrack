@@ -33,23 +33,24 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EasyHttp">
-      <HintPath>..\packages\EasyHttp.1.6.58.0\lib\net40\EasyHttp.dll</HintPath>
+    <Reference Include="EasyHttp, Version=1.6.67.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EasyHttp.1.6.67.0\lib\net40\EasyHttp.dll</HintPath>
     </Reference>
     <Reference Include="JsonFx">
       <HintPath>..\packages\JsonFx.2.0.1209.2802\lib\net40\JsonFx.dll</HintPath>
     </Reference>
-    <Reference Include="Seq.Apps, Version=0.10.8.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Seq.Apps, Version=1.4.8.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Seq.Apps.0.10.8\lib\net45\Seq.Apps.dll</HintPath>
+      <HintPath>..\packages\Seq.Apps.1.4.8\lib\net45\Seq.Apps.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog, Version=1.2.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+    <Reference Include="Serilog, Version=1.3.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Serilog.1.2.7\lib\net45\Serilog.dll</HintPath>
+      <HintPath>..\packages\Serilog.1.3.36\lib\net45\Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.FullNetFx, Version=1.2.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+    <Reference Include="Serilog.FullNetFx, Version=1.3.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Serilog.1.2.7\lib\net45\Serilog.FullNetFx.dll</HintPath>
+      <HintPath>..\packages\Serilog.1.3.36\lib\net45\Serilog.FullNetFx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,6 +59,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Veil">
+      <HintPath>..\packages\Veil.0.2.0\lib\net40\Veil.dll</HintPath>
+    </Reference>
+    <Reference Include="Veil.Handlebars">
+      <HintPath>..\packages\Veil.Handlebars.0.2.0\lib\net40\Veil.Handlebars.dll</HintPath>
+    </Reference>
     <Reference Include="YouTrackSharp">
       <HintPath>..\packages\YouTrackSharp.2.0.15.0\lib\net40\YouTrackSharp.dll</HintPath>
     </Reference>
@@ -69,6 +76,7 @@
     <Compile Include="YouTrackExceptionPosterSettings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Seq.App.YouTrack.nuspec" />
   </ItemGroup>

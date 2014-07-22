@@ -12,15 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Seq.Apps.YouTrack
+namespace Seq.App.YouTrack
 {
+    using Seq.Apps;
+
+    /// <summary>
+    /// you track exception poster.
+    /// </summary>
     public partial class YouTrackExceptionPoster
     {
         /// <summary>
-        ///     Gets the host.
+        /// Gets or sets the host.
         /// </summary>
         /// <value>
-        ///     The host.
+        /// The host.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Host (url)",
@@ -28,10 +33,10 @@ namespace Seq.Apps.YouTrack
         public string Host { get; set; }
 
         /// <summary>
-        ///     Gets the port.
+        /// Gets or sets the port.
         /// </summary>
         /// <value>
-        ///     The port.
+        /// The port.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Port",
@@ -40,10 +45,10 @@ namespace Seq.Apps.YouTrack
         public int? Port { get; set; }
 
         /// <summary>
-        ///     Gets a value indicating whether this object use ssl.
+        /// Gets or sets a value indicating whether this object use ssl.
         /// </summary>
         /// <value>
-        ///     true if use ssl, false if not.
+        /// true if use ssl, false if not.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Use SSL",
@@ -52,10 +57,10 @@ namespace Seq.Apps.YouTrack
         public bool UseSSL { get; set; }
 
         /// <summary>
-        ///     Gets the full pathname of the file.
+        /// Gets or sets the full pathname of the file.
         /// </summary>
         /// <value>
-        ///     The full pathname of the file.
+        /// The full pathname of the file.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Path",
@@ -64,10 +69,10 @@ namespace Seq.Apps.YouTrack
         public string Path { get; set; }
 
         /// <summary>
-        ///     Gets the name of the project.
+        /// Gets or sets the name of the project.
         /// </summary>
         /// <value>
-        ///     The name of the project.
+        /// The name of the project.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Project name",
@@ -76,10 +81,25 @@ namespace Seq.Apps.YouTrack
         public string ProjectName { get; set; }
 
         /// <summary>
-        ///     Gets the username.
+        /// Gets or sets the issue template.
         /// </summary>
         /// <value>
-        ///     The username.
+        /// The issue template.
+        /// </value>
+        [SeqAppSetting(
+            DisplayName = "Issue Template",
+            IsOptional = true,
+            HelpText =
+                @"Template used for posting issues. Supports handlebar syntax with following values: {{Id}} {{Data.Level}}, {{Data.Exception}}, {{TimestampUtc}}, {{Data.RenderedMessage}}, {{Data.MessageTemplate}}",
+            InputType = SettingInputType.LongText),
+        ]
+        public string IssueTemplate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the username.
+        /// </summary>
+        /// <value>
+        /// The username.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Username",
@@ -88,10 +108,10 @@ namespace Seq.Apps.YouTrack
         public string Username { get; set; }
 
         /// <summary>
-        ///     Gets the password.
+        /// Gets or sets the password.
         /// </summary>
         /// <value>
-        ///     The password.
+        /// The password.
         /// </value>
         [SeqAppSetting(
             DisplayName = "Password",

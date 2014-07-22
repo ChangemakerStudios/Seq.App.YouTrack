@@ -12,21 +12,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Seq.Apps.YouTrack
+namespace Seq.App.YouTrack
 {
+    using System;
+    using System.IO;
+
+    using Seq.Apps;
     using Seq.Apps.LogEvents;
+
+    using Veil;
 
     using YouTrackSharp.Infrastructure;
     using YouTrackSharp.Issues;
 
     /// <summary>
-    /// You track exception poster.
+    ///     You track exception poster.
     /// </summary>
     [SeqApp("YouTrack Exception Poster", Description = "Create a YouTrack issue from an exception event.")]
     public partial class YouTrackExceptionPoster : Reactor, ISubscribeTo<LogEventData>
     {
         /// <summary>
-        /// Ons the given event.
+        /// Issue Template Default
+        /// </summary>
+        const string IssueTemplateDefault =
+            "====Logged *{{Data.Level}}* Exception Event ID *#{{Id}}*====\r\n==Exception==\r\n{{Data.Exception}}";
+
+        /// <summary>
+        ///     The lazy vail engine.
+        /// </summary>
+        static readonly Lazy<VeilEngine> _lazyVailEngine;
+
+        /// <summary>
+        ///     The compiled template.
+        /// </summary>
+        Action<TextWriter, Event<LogEventData>> _compiledTemplate;
+
+        /// <summary>
+        ///     Initializes static members of the YouTrackExceptionPoster class.
+        /// </summary>
+        static YouTrackExceptionPoster()
+        {
+            _lazyVailEngine = new Lazy<VeilEngine>(() => new VeilEngine());
+        }
+
+        /// <summary>
+        ///     Gets the vail engine.
+        /// </summary>
+        /// <value>
+        ///     The vail engine.
+        /// </value>
+        static VeilEngine VailEngine
+        {
+            get { return _lazyVailEngine.Value; }
+        }
+
+        /// <summary>
+        ///     Ons the given event.
         /// </summary>
         /// <param name="event"> The event.</param>
         public void On(Event<LogEventData> @event)
@@ -38,23 +79,15 @@ namespace Seq.Apps.YouTrack
             }
 
             var issueManagement = this.GetIssueManagement();
-
             if (issueManagement == null)
-            {
                 return;
-            }
 
             try
             {
                 dynamic issue = new Issue();
 
                 issue.Summary = @event.Data.RenderedMessage;
-                issue.Description = string.Format(
-                    "Logged {0} Exception Event Id #{1}\r\nException:\r\n{2}",
-                    @event.Data.Level,
-                    @event.Id,
-                    @event.Data.Exception);
-
+                issue.Description = RenderTemplate(@event);
                 issue.ProjectShortName = this.ProjectName;
                 issue.Type = "Auto-reported Exception";
 
@@ -63,18 +96,53 @@ namespace Seq.Apps.YouTrack
                 if (issueNumber.IsSet())
                 {
                     this.Log.Information("Issue #{0} Posted to YouTrack", issueNumber);
-
-                    issueManagement.ApplyCommand(issueNumber, "comment", string.Format("Posted from Seq. Event Timestamp UTC: {0}", @event.TimestampUtc));
+                    issueManagement.ApplyCommand(
+                        issueNumber,
+                        "comment",
+                        string.Format("Posted from Seq. Event Timestamp UTC: {0}", @event.TimestampUtc));
                 }
             }
             catch (System.Exception ex)
             {
                 // failure creating issue
-                this.Log.Error(ex, "Can't Create Issue on YouTrack.");
+                this.Log.Error(ex, "Failure Creating Issue on YouTrack");
             }
         }
 
-        private IssueManagement GetIssueManagement()
+        /// <summary>
+        ///     Renders the template described by @event.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
+        /// <param name="event"> The event.</param>
+        /// <returns>
+        ///     A string.
+        /// </returns>
+        string RenderTemplate(Event<LogEventData> @event)
+        {
+            if (@event == null)
+                throw new ArgumentNullException("event");
+
+            if (_compiledTemplate == null)
+            {
+                _compiledTemplate = VailEngine.Compile<Event<LogEventData>>(
+                    "handlebars",
+                    new StringReader(this.IssueTemplate ?? IssueTemplateDefault));
+            }
+
+            using (var writer = new StringWriter())
+            {
+                _compiledTemplate(writer, @event);
+                return writer.ToString();
+            }
+        }
+
+        /// <summary>
+        ///     Gets issue management.
+        /// </summary>
+        /// <returns>
+        ///     The issue management.
+        /// </returns>
+        IssueManagement GetIssueManagement()
         {
             try
             {
@@ -82,9 +150,7 @@ namespace Seq.Apps.YouTrack
                 var connection = new Connection(this.Host, this.Port ?? 80, this.UseSSL, this.Path);
 
                 if (this.Username.IsSet() && this.Password.IsSet())
-                {
                     connection.Authenticate(this.Username, this.Password);
-                }
 
                 return new IssueManagement(connection);
             }

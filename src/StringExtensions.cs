@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Seq.Apps.YouTrack
+namespace Seq.App.YouTrack
 {
     public static class StringExtensions
     {
