@@ -95,7 +95,7 @@ namespace Seq.App.YouTrack
 
                 if (issueNumber.IsSet())
                 {
-                    this.Log.Information("Issue #{0} Posted to YouTrack", issueNumber);
+                    this.Log.Information("Issue {YouTrackIssueNumber} Created in YouTrack", issueNumber);
                     issueManagement.ApplyCommand(
                         issueNumber,
                         "comment",
