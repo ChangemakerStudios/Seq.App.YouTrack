@@ -35,7 +35,7 @@ namespace Seq.App.YouTrack
         /// Issue Template Default
         /// </summary>
         const string IssueTemplateDefault =
-            "====Logged *{{Data.Level}}* Exception Event ID *#{{Id}}*====\r\n==Exception==\r\n{{Data.Exception}}";
+            "====Logged *{{Data.Level}}* Event ID *#{{Id}}*====\r\n\r\n====Exception=={{Data.Exception}}";
 
         /// <summary>
         ///     The lazy vail engine.
