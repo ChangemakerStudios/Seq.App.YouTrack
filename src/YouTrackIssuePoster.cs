@@ -26,40 +26,40 @@ namespace Seq.App.YouTrack
     using YouTrackSharp.Issues;
 
     /// <summary>
-    ///     You track exception poster.
+    /// You track issue poster.
     /// </summary>
-    [SeqApp("YouTrack Exception Poster", Description = "Create a YouTrack issue from an exception event.")]
-    public partial class YouTrackExceptionPoster : Reactor, ISubscribeTo<LogEventData>
+    [SeqApp("YouTrack Issue Poster", Description = "Create a YouTrack issue from an event.")]
+    public partial class YouTrackIssuePoster : Reactor, ISubscribeTo<LogEventData>
     {
         /// <summary>
-        /// Issue Template Default
+        /// Issue Template Default.
         /// </summary>
         const string IssueTemplateDefault =
             "====Logged *{{Data.Level}}* Event ID *#{{Id}}*====\r\n\r\n====Exception=={{Data.Exception}}";
 
         /// <summary>
-        ///     The lazy vail engine.
+        /// The lazy vail engine.
         /// </summary>
         static readonly Lazy<VeilEngine> _lazyVailEngine;
 
         /// <summary>
-        ///     The compiled template.
+        /// The compiled template.
         /// </summary>
         Action<TextWriter, Event<LogEventData>> _compiledTemplate;
 
         /// <summary>
-        ///     Initializes static members of the YouTrackExceptionPoster class.
+        /// Initializes static members of the YouTrackIssuePoster class.
         /// </summary>
-        static YouTrackExceptionPoster()
+        static YouTrackIssuePoster()
         {
             _lazyVailEngine = new Lazy<VeilEngine>(() => new VeilEngine());
         }
 
         /// <summary>
-        ///     Gets the vail engine.
+        /// Gets the vail engine.
         /// </summary>
         /// <value>
-        ///     The vail engine.
+        /// The vail engine.
         /// </value>
         static VeilEngine VailEngine
         {
@@ -67,17 +67,11 @@ namespace Seq.App.YouTrack
         }
 
         /// <summary>
-        ///     Ons the given event.
+        /// Ons the given event.
         /// </summary>
         /// <param name="event"> The event.</param>
         public void On(Event<LogEventData> @event)
         {
-            if (!@event.Data.Exception.IsSet())
-            {
-                this.Log.Information("Cannot send event that does not have exception data.");
-                return;
-            }
-
             var issueManagement = this.GetIssueManagement();
             if (issueManagement == null)
                 return;
@@ -89,17 +83,21 @@ namespace Seq.App.YouTrack
                 issue.Summary = @event.Data.RenderedMessage;
                 issue.Description = RenderTemplate(@event);
                 issue.ProjectShortName = this.ProjectName;
-                issue.Type = "Auto-reported Exception";
+                issue.Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
 
                 string issueNumber = issueManagement.CreateIssue(issue);
 
                 if (issueNumber.IsSet())
                 {
-                    this.Log.Information("Issue {YouTrackIssueNumber} Created in YouTrack", issueNumber);
+                    this.Log.Information(
+                        "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
+                        issueNumber,
+                        string.Format("{0}/issue/{1}", this.GetYouTrackUrl(), issueNumber));
+
                     issueManagement.ApplyCommand(
                         issueNumber,
                         "comment",
-                        string.Format("Posted from Seq. Event Timestamp UTC: {0}", @event.TimestampUtc));
+                        string.Format("Posted from Seq Event Timestamp UTC: {0}", @event.TimestampUtc));
                 }
             }
             catch (System.Exception ex)
@@ -110,12 +108,12 @@ namespace Seq.App.YouTrack
         }
 
         /// <summary>
-        ///     Renders the template described by @event.
+        /// Renders the template described by @event.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
         /// <param name="event"> The event.</param>
         /// <returns>
-        ///     A string.
+        /// A string.
         /// </returns>
         string RenderTemplate(Event<LogEventData> @event)
         {
@@ -137,10 +135,22 @@ namespace Seq.App.YouTrack
         }
 
         /// <summary>
-        ///     Gets issue management.
+        /// Gets you track URL.
         /// </summary>
         /// <returns>
-        ///     The issue management.
+        /// you track URL.
+        /// </returns>
+        string GetYouTrackUrl()
+        {
+            var builder = new UriBuilder(this.UseSSL ? "https" : "http", this.Host, this.Port ?? 80, this.Path);
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Gets issue management.
+        /// </summary>
+        /// <returns>
+        /// The issue management.
         /// </returns>
         IssueManagement GetIssueManagement()
         {
