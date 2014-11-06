@@ -1,0 +1,9 @@
+﻿platform: AnyCPU
+configuration: Release
+
+before_build:
+- nuget restore
+
+after_build:
+- nuget pack Seq.App.YouTrack.nuspec -version %APPVEYOR_BUILD_VERSION%
+- appveyor PushArtifact Seq.App.YouTrack.%APPVEYOR_BUILD_VERSION%.nupkg

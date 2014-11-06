@@ -13,12 +13,12 @@
     <tags>seq-app youtrack</tags>
   </metadata>
   <files>
-    <file src="bin\Release\Seq.App.YouTrack.dll" target="lib\net45" />
-    <file src="bin\Release\Seq.App.YouTrack.pdb" target="lib\net45" />
-    <file src="bin\Release\EasyHttp.dll" target="lib\net45" />
-    <file src="bin\Release\JsonFx.dll" target="lib\net45" />
-    <file src="bin\Release\YouTrackSharp.dll" target="lib\net45" />
-    <file src="bin\Release\Veil.dll" target="lib\net45" />
-    <file src="bin\Release\Veil.Handlebars.dll" target="lib\net45" />
+    <file src="src\bin\Release\Seq.App.YouTrack.dll" target="lib\net45" />
+    <file src="src\bin\Release\Seq.App.YouTrack.pdb" target="lib\net45" />
+    <file src="src\bin\Release\EasyHttp.dll" target="lib\net45" />
+    <file src="src\bin\Release\JsonFx.dll" target="lib\net45" />
+    <file src="src\bin\Release\YouTrackSharp.dll" target="lib\net45" />
+    <file src="src\bin\Release\Veil.dll" target="lib\net45" />
+    <file src="src\bin\Release\Veil.Handlebars.dll" target="lib\net45" />
   </files>
 </package>

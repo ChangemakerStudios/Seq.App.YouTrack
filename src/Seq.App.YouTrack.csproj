@@ -33,24 +33,24 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EasyHttp, Version=1.6.67.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="EasyHttp, Version=1.6.68.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EasyHttp.1.6.67.0\lib\net40\EasyHttp.dll</HintPath>
+      <HintPath>..\packages\EasyHttp.1.6.68.0\lib\net40\EasyHttp.dll</HintPath>
     </Reference>
     <Reference Include="JsonFx">
       <HintPath>..\packages\JsonFx.2.0.1209.2802\lib\net40\JsonFx.dll</HintPath>
     </Reference>
-    <Reference Include="Seq.Apps, Version=1.4.12.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Seq.Apps, Version=1.5.18.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Seq.Apps.1.4.12\lib\net45\Seq.Apps.dll</HintPath>
+      <HintPath>..\packages\Seq.Apps.1.5.18\lib\net45\Seq.Apps.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=1.4.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Serilog.1.4.14\lib\net45\Serilog.dll</HintPath>
+      <HintPath>..\packages\Serilog.1.4.15\lib\net45\Serilog.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.FullNetFx, Version=1.4.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Serilog.1.4.14\lib\net45\Serilog.FullNetFx.dll</HintPath>
+      <HintPath>..\packages\Serilog.1.4.15\lib\net45\Serilog.FullNetFx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,9 +65,9 @@
     <Reference Include="Veil.Handlebars">
       <HintPath>..\packages\Veil.Handlebars.0.2.0\lib\net40\Veil.Handlebars.dll</HintPath>
     </Reference>
-    <Reference Include="YouTrackSharp, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="YouTrackSharp, Version=2.0.29.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\YouTrackSharp.2.0.27.0\lib\net40\YouTrackSharp.dll</HintPath>
+      <HintPath>..\packages\YouTrackSharp.2.0.29.0\lib\net40\YouTrackSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -79,9 +79,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Seq.App.YouTrack.nuspec">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
