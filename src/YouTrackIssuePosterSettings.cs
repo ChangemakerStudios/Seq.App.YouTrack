@@ -28,7 +28,7 @@ namespace Seq.App.YouTrack
         ///     The host.
         /// </value>
         [SeqAppSetting(DisplayName = "Host (url)", HelpText = "URL of the YouTrack instance (do not include http:// or path).")]
-        public string Host { get; set; }
+        public string HostUrl { get; set; }
 
         /// <summary>
         ///     Gets or sets the port.

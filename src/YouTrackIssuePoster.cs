@@ -72,7 +72,7 @@ namespace Seq.App.YouTrack
         /// <param name="event"> The event.</param>
         public void On(Event<LogEventData> @event)
         {
-            var issueManagement = this.GetIssueManagement();
+            var issueManagement = GetIssueManagement();
             if (issueManagement == null)
                 return;
 
@@ -82,28 +82,26 @@ namespace Seq.App.YouTrack
 
                 issue.Summary = @event.Data.RenderedMessage;
                 issue.Description = RenderTemplate(@event);
-                issue.ProjectShortName = this.ProjectName;
-                issue.Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
+                issue.ProjectShortName = ProjectName;
+                issue.Type = YouTrackIssueType.IsSet() ? YouTrackIssueType : "Auto-reported Exception";
 
                 string issueNumber = issueManagement.CreateIssue(issue);
 
-                if (issueNumber.IsSet())
-                {
-                    this.Log.Information(
-                        "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
-                        issueNumber,
-                        string.Format("{0}/issue/{1}", this.GetYouTrackUrl(), issueNumber));
+                if (!issueNumber.IsSet()) return;
 
-                    issueManagement.ApplyCommand(
-                        issueNumber,
-                        "comment",
-                        string.Format("Posted from Seq Event Timestamp UTC: {0}", @event.TimestampUtc));
-                }
+                Log.Information(
+                    "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
+                    issueNumber,
+                    string.Format("{0}/issue/{1}", GetYouTrackUrl(), issueNumber));
+
+                issueManagement.ApplyCommand(issueNumber,
+                    "comment",
+                    string.Format("Posted from Seq Event Timestamp UTC: {0}", @event.TimestampUtc));
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 // failure creating issue
-                this.Log.Error(ex, "Failure Creating Issue on YouTrack");
+                Log.Error(ex, "Failure Creating Issue on YouTrack");
             }
         }
 
@@ -122,9 +120,10 @@ namespace Seq.App.YouTrack
 
             if (_compiledTemplate == null)
             {
-                _compiledTemplate = VailEngine.Compile<Event<LogEventData>>(
-                    "handlebars",
-                    new StringReader(this.IssueTemplate ?? IssueTemplateDefault));
+                using (var templateContents = new StringReader(IssueTemplate ?? IssueTemplateDefault))
+                {
+                    _compiledTemplate = VailEngine.Compile<Event<LogEventData>>("handlebars", templateContents);
+                }
             }
 
             using (var writer = new StringWriter())
@@ -142,7 +141,7 @@ namespace Seq.App.YouTrack
         /// </returns>
         string GetYouTrackUrl()
         {
-            var builder = new UriBuilder(this.UseSSL ? "https" : "http", this.Host, this.Port ?? 80, this.Path);
+            var builder = new UriBuilder(UseSSL ? "https" : "http", HostUrl, Port ?? 80, Path);
             return builder.ToString();
         }
 
@@ -157,17 +156,17 @@ namespace Seq.App.YouTrack
             try
             {
                 // have exceptions -- throw to YouTrack...
-                var connection = new Connection(this.Host, this.Port ?? 80, this.UseSSL, this.Path);
+                var connection = new Connection(HostUrl, Port ?? 80, UseSSL, Path);
 
-                if (this.Username.IsSet() && this.Password.IsSet())
-                    connection.Authenticate(this.Username, this.Password);
+                if (Username.IsSet() && Password.IsSet())
+                    connection.Authenticate(Username, Password);
 
                 return new IssueManagement(connection);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 // failure creating issue
-                this.Log.Error(ex, "Unable to connect to YouTrack to create exception.");
+                Log.Error(ex, "Unable to connect to YouTrack to create exception.");
             }
 
             return null;
