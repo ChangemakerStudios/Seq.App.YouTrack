@@ -7,8 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.App.YouTrack", "src\Seq
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{EF8E19FF-0CAB-4E2E-B76F-F019A7C35D58}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		README.md = README.md
 		asset\seq-app-youtrack.png = asset\seq-app-youtrack.png
+		Seq.App.YouTrack.nuspec = Seq.App.YouTrack.nuspec
 	EndProjectSection
 EndProject
 Global
