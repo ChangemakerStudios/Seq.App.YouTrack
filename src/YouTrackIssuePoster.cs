@@ -1,4 +1,4 @@
-﻿// Copyright 2014 CaptiveAire Systems
+﻿// Copyright 2014-2016 CaptiveAire Systems
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,9 @@
 namespace Seq.App.YouTrack
 {
     using System;
-    using System.IO;
 
     using Seq.Apps;
     using Seq.Apps.LogEvents;
-
-    using Veil;
 
     using YouTrackSharp.Infrastructure;
     using YouTrackSharp.Issues;
@@ -31,39 +28,29 @@ namespace Seq.App.YouTrack
     [SeqApp("YouTrack Issue Poster", Description = "Create a YouTrack issue from an event.")]
     public partial class YouTrackIssuePoster : Reactor, ISubscribeTo<LogEventData>
     {
-        /// <summary>
-        /// Issue Template Default.
-        /// </summary>
-        const string IssueTemplateDefault =
-            "====Logged *{{Data.Level}}* Event ID *#{{Id}}*====\r\n\r\n====Exception=={{Data.Exception}}";
+        readonly Lazy<Func<object, string>> _summaryTemplate;
+        readonly Lazy<Func<object, string>> _bodyTemplate;
 
         /// <summary>
-        /// The lazy vail engine.
+        /// Default constructor.
         /// </summary>
-        static readonly Lazy<VeilEngine> _lazyVailEngine;
-
-        /// <summary>
-        /// The compiled template.
-        /// </summary>
-        Action<TextWriter, Event<LogEventData>> _compiledTemplate;
-
-        /// <summary>
-        /// Initializes static members of the YouTrackIssuePoster class.
-        /// </summary>
-        static YouTrackIssuePoster()
+        public YouTrackIssuePoster()
         {
-            _lazyVailEngine = new Lazy<VeilEngine>(() => new VeilEngine());
-        }
+            _summaryTemplate = new Lazy<Func<object, string>>(
+                () =>
+                    {
+                        var summaryTemplate = IssueSummaryTemplate;
+                        if (string.IsNullOrEmpty(summaryTemplate)) summaryTemplate = Resources.DefaultIssueSummaryTemplate;
+                        return Handlebars.Handlebars.Compile(summaryTemplate);
+                    });
 
-        /// <summary>
-        /// Gets the vail engine.
-        /// </summary>
-        /// <value>
-        /// The vail engine.
-        /// </value>
-        static VeilEngine VailEngine
-        {
-            get { return _lazyVailEngine.Value; }
+            _bodyTemplate = new Lazy<Func<object, string>>(
+                () =>
+                    {
+                        var bodyTemplate = IssueBodyTemplate;
+                        if (string.IsNullOrEmpty(bodyTemplate)) bodyTemplate = Resources.DefaultIssueBodyTemplate;
+                        return Handlebars.Handlebars.Compile(bodyTemplate);
+                    });
         }
 
         /// <summary>
@@ -73,16 +60,15 @@ namespace Seq.App.YouTrack
         public void On(Event<LogEventData> @event)
         {
             var issueManagement = this.GetIssueManagement();
-            if (issueManagement == null)
-                return;
+            if (issueManagement == null) return;
 
             try
             {
                 dynamic issue = new Issue();
 
-                issue.Summary = @event.Data.RenderedMessage;
-                issue.Description = RenderTemplate(@event);
-                issue.ProjectShortName = this.ProjectName;
+                issue.Summary = EmailPlus.EmailReactor.FormatTemplate(this._summaryTemplate.Value, @event, this.Host);
+                issue.Description = EmailPlus.EmailReactor.FormatTemplate(this._bodyTemplate.Value, @event, this.Host);
+                issue.ProjectShortName = this.ProjectId;
                 issue.Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
 
                 string issueNumber = issueManagement.CreateIssue(issue);
@@ -92,45 +78,15 @@ namespace Seq.App.YouTrack
                     this.Log.Information(
                         "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
                         issueNumber,
-                        string.Format("{0}/issue/{1}", this.GetYouTrackUrl(), issueNumber));
+                        $"{GetYouTrackUri().ToFormattedUrl()}/issue/{issueNumber}");
 
-                    issueManagement.ApplyCommand(
-                        issueNumber,
-                        "comment",
-                        string.Format("Posted from Seq Event Timestamp UTC: {0}", @event.TimestampUtc));
+                    issueManagement.ApplyCommand(issueNumber, "comment", $"Posted from Seq Event Timestamp UTC: {@event.TimestampUtc}");
                 }
             }
             catch (System.Exception ex)
             {
                 // failure creating issue
-                this.Log.Error(ex, "Failure Creating Issue on YouTrack");
-            }
-        }
-
-        /// <summary>
-        /// Renders the template described by @event.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
-        /// <param name="event"> The event.</param>
-        /// <returns>
-        /// A string.
-        /// </returns>
-        string RenderTemplate(Event<LogEventData> @event)
-        {
-            if (@event == null)
-                throw new ArgumentNullException("event");
-
-            if (_compiledTemplate == null)
-            {
-                _compiledTemplate = VailEngine.Compile<Event<LogEventData>>(
-                    "handlebars",
-                    new StringReader(this.IssueTemplate ?? IssueTemplateDefault));
-            }
-
-            using (var writer = new StringWriter())
-            {
-                _compiledTemplate(writer, @event);
-                return writer.ToString();
+                this.Log.Error(ex, "Failure Creating Issue on YouTrack {YouTrackUrl}", GetYouTrackUri().ToFormattedUrl());
             }
         }
 
@@ -140,10 +96,9 @@ namespace Seq.App.YouTrack
         /// <returns>
         /// you track URL.
         /// </returns>
-        string GetYouTrackUrl()
+        UriBuilder GetYouTrackUri()
         {
-            var builder = new UriBuilder(this.UseSSL ? "https" : "http", this.Host, this.Port ?? 80, this.Path);
-            return builder.ToString();
+            return new UriBuilder(this.YouTrackUri);
         }
 
         /// <summary>
@@ -154,10 +109,16 @@ namespace Seq.App.YouTrack
         /// </returns>
         IssueManagement GetIssueManagement()
         {
+            var uri = GetYouTrackUri();
+
             try
             {
                 // have exceptions -- throw to YouTrack...
-                var connection = new Connection(this.Host, this.Port ?? 80, this.UseSSL, this.Path);
+                var connection = new Connection(
+                    uri.Host,
+                    uri.Port,
+                    uri.IsSSL(),
+                    uri.GetPathOrEmptyAsNull());
 
                 if (this.Username.IsSet() && this.Password.IsSet())
                     connection.Authenticate(this.Username, this.Password);
@@ -166,8 +127,8 @@ namespace Seq.App.YouTrack
             }
             catch (System.Exception ex)
             {
-                // failure creating issue
-                this.Log.Error(ex, "Unable to connect to YouTrack to create exception.");
+                // failure connecting to YT
+                this.Log.Error(ex, "Failure Connecting to YouTrack");
             }
 
             return null;
