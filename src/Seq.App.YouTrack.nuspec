@@ -6,7 +6,7 @@
         <authors>CaptiveAire Systems</authors>
         <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
         <projectUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</projectUrl>
-        <iconUrl>http://raw2.github.com/CaptiveAire/Seq.App.YouTrack/master/asset/seq-app-youtrack.png</iconUrl>
+        <iconUrl>https://raw.githubusercontent.com/CaptiveAire/Seq.App.YouTrack/master/asset/seq-app-youtrack.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</description>
         <language>en-US</language>

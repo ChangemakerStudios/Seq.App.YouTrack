@@ -15,6 +15,7 @@
 namespace Seq.App.YouTrack
 {
     using System;
+    using System.Collections.ObjectModel;
 
     using Seq.Apps;
     using Seq.Apps.LogEvents;

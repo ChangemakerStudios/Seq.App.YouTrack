@@ -34,7 +34,7 @@ namespace Seq.App.YouTrack
         /// <value>
         /// The issue summary template.
         /// </value>
-        [SeqAppSetting(DisplayName = "Issue Summary Template", IsOptional = true,
+        [SeqAppSetting(DisplayName = "Issue Summary Template", IsOptional = true, InputType = SettingInputType.LongText,
             HelpText =
                 "The template to use when generating issue body, using Handlebars.NET syntax. Leave this blank to use "
                 + "the default template that includes the message.")]
@@ -46,7 +46,7 @@ namespace Seq.App.YouTrack
         /// <value>
         ///     The issue template.
         /// </value>
-        [SeqAppSetting(DisplayName = "Issue Body Template", IsOptional = true,
+        [SeqAppSetting(DisplayName = "Issue Body Template", IsOptional = true, InputType = SettingInputType.LongText,
             HelpText =
                 "The template to use when generating issue body, using Handlebars.NET syntax. Leave this blank to use "
                 + "the default template that includes the message and properties.")]

@@ -16,9 +16,6 @@ namespace Seq.App.YouTrack
 {
     public static class StringExtensions
     {
-        public static bool IsSet(this string str)
-        {
-            return !string.IsNullOrWhiteSpace(str);
-        }
+        public static bool IsSet(this string str) => !string.IsNullOrWhiteSpace(str);
     }
 }

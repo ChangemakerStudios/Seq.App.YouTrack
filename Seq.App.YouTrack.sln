@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{EF8E19
 		appveyor.yml = appveyor.yml
 		README.md = README.md
 		asset\seq-app-youtrack.png = asset\seq-app-youtrack.png
-		Seq.App.YouTrack.nuspec = Seq.App.YouTrack.nuspec
+		src\Seq.App.YouTrack.nuspec = src\Seq.App.YouTrack.nuspec
 	EndProjectSection
 EndProject
 Global

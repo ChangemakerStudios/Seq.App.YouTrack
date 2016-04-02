@@ -1,7 +1,7 @@
-![](https://raw.githubusercontent.com/CaptiveAire/Seq.App.YouTrack/master/asset/seq-app-youtrack.png) Seq.App.YouTrack
+<img src="https://raw.githubusercontent.com/CaptiveAire/Seq.App.YouTrack/master/asset/seq-app-youtrack.png" width="32" height="32" /> Seq.App.YouTrack
 =================
 
-[![Build status](https://ci.appveyor.com/api/projects/status/vkogqinnmjjeyh9l/branch/master?svg=true)](https://ci.appveyor.com/project/Jaben/seq-app-youtrack/branch/master)
+[![NuGet version](https://badge.fury.io/nu/Seq.App.YouTrack.svg)](https://badge.fury.io/nu/Seq.App.YouTrack) [![Build status](https://ci.appveyor.com/api/projects/status/vkogqinnmjjeyh9l/branch/master?svg=true)](https://ci.appveyor.com/project/Jaben/seq-app-youtrack/branch/master)
 
 [Seq - STRUCTURED LOGS FOR .NET APPS](http://getseq.net) Plugin/App that allow for Posting an Exception to an Issue in JetBrains YouTrack.
 
