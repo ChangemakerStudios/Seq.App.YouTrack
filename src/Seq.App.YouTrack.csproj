@@ -84,6 +84,7 @@
     </Compile>
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\UriBuilderExtensions.cs" />
+    <Compile Include="WrappedException.cs" />
     <Compile Include="YouTrackIssuePoster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YouTrackIssuePosterSettings.cs" />

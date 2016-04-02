@@ -15,8 +15,11 @@
 namespace Seq.App.YouTrack
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Dynamic;
+    using System.IO;
     using System.Linq;
 
     using HandlebarsDotNet;
@@ -25,8 +28,17 @@ namespace Seq.App.YouTrack
     using Seq.Apps;
     using Seq.Apps.LogEvents;
 
+    using Serilog;
+    using Serilog.Events;
+    using Serilog.Formatting.Json;
+    using Serilog.Parsing;
+    using Serilog.Sinks.IOFile;
+    using Serilog.Sinks.RollingFile;
+
     using YouTrackSharp.Infrastructure;
     using YouTrackSharp.Issues;
+
+    using LogEventLevel = Seq.Apps.LogEvents.LogEventLevel;
 
     /// <summary>
     /// You track issue poster.
@@ -84,12 +96,26 @@ namespace Seq.App.YouTrack
 
                 if (issueNumber.IsSet())
                 {
-                    this.Log.Information(
+                    Log.Information(
                         "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
                         issueNumber,
                         $"{GetYouTrackUri().ToFormattedUrl()}/issue/{issueNumber}");
 
                     issueManagement.ApplyCommand(issueNumber, "comment", $"Posted from Seq Event Timestamp UTC: {@event.TimestampUtc}");
+
+                    if (AttachCopyOfEventToIssue)
+                    {
+                        var file = GetJsonEventFile(@event, issueNumber);
+                        issueManagement.AttachFileToIssue(issueNumber, file);
+                        try
+                        {
+                            File.Delete(file);
+                        }
+                        catch
+                        {
+                            // can't say I care too much...
+                        }
+                    }
                 }
             }
             catch (System.Exception ex)
@@ -97,6 +123,65 @@ namespace Seq.App.YouTrack
                 // failure creating issue
                 this.Log.Error(ex, "Failure Creating Issue on YouTrack {YouTrackUrl}", GetYouTrackUri().ToFormattedUrl());
             }
+        }
+
+        string GetJsonEventFile(Event<LogEventData> evt, string issueNumber)
+        {
+            var parser = new MessageTemplateParser();
+            var properties =
+                (evt.Data.Properties ?? new Dictionary<string, object>()).Select(
+                    kvp => CreateProperty(kvp.Key, kvp.Value));
+
+            var logEvent = new LogEvent(
+                evt.Data.LocalTimestamp,
+                (Serilog.Events.LogEventLevel)Enum.Parse(typeof(Serilog.Events.LogEventLevel), evt.Data.Level.ToString()),
+                evt.Data.Exception != null ? new WrappedException(evt.Data.Exception) : null,
+                parser.Parse(evt.Data.MessageTemplate),
+                properties);
+
+            string logFilePath = Path.Combine(App.StoragePath, string.Format($"SeqAppYouTrack-{issueNumber}.json"));
+            using (var jsonSink = new FileSink(logFilePath, new JsonFormatter(), null))
+            {
+                var logger =
+                    new LoggerConfiguration().WriteTo.Sink(jsonSink, Serilog.Events.LogEventLevel.Verbose)
+                        .CreateLogger();
+                logger.Write(logEvent);
+            }
+
+            return logFilePath;
+        }
+
+        LogEventProperty CreateProperty(string name, object value) => new LogEventProperty(name, CreatePropertyValue(value));
+
+        LogEventPropertyValue CreatePropertyValue(object value)
+        {
+            var d = value as IDictionary<string, object>;
+            if (d != null)
+            {
+                object tt;
+                d.TryGetValue("$typeTag", out tt);
+                return new StructureValue(
+                    d.Where(kvp => kvp.Key != "$typeTag").Select(kvp => CreateProperty(kvp.Key, kvp.Value)),
+                    tt as string);
+            }
+
+            var dd = value as IDictionary;
+            if (dd != null)
+            {
+                return new DictionaryValue(dd.Keys
+                    .Cast<object>()
+                    .Select(k => new KeyValuePair<ScalarValue, LogEventPropertyValue>(
+                        (ScalarValue)CreatePropertyValue(k),
+                        CreatePropertyValue(dd[k]))));
+            }
+
+            if (value == null || value is string || !(value is IEnumerable))
+            {
+                return new ScalarValue(value);
+            }
+
+            var enumerable = (IEnumerable)value;
+            return new SequenceValue(enumerable.Cast<object>().Select(CreatePropertyValue));
         }
 
         object GetPayload(Event<LogEventData> @event)

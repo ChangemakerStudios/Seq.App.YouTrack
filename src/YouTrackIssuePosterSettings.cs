@@ -92,5 +92,13 @@ namespace Seq.App.YouTrack
         [SeqAppSetting(DisplayName = "Password", IsOptional = false, HelpText = "Authenticated username for YouTrack.",
             InputType = SettingInputType.Password)]
         public string Password { get; set; }
+
+
+        /// <summary>
+        /// Should attach a copy of the event to the issue.
+        /// </summary>
+        [SeqAppSetting(DisplayName = "Attach Event?", IsOptional = true, HelpText = "Attaches a copy of the log event to the issue.",
+            InputType = SettingInputType.Checkbox)]
+        public bool AttachCopyOfEventToIssue { get; set; }
     }
 }
