@@ -15,8 +15,13 @@
 namespace Seq.App.YouTrack
 {
     using System;
-    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
 
+    using HandlebarsDotNet;
+
+    using Seq.App.YouTrack.Helpers;
     using Seq.Apps;
     using Seq.Apps.LogEvents;
 
@@ -29,6 +34,11 @@ namespace Seq.App.YouTrack
     [SeqApp("YouTrack Issue Poster", Description = "Create a YouTrack issue from an event.")]
     public partial class YouTrackIssuePoster : Reactor, ISubscribeTo<LogEventData>
     {
+        static YouTrackIssuePoster()
+        {
+            Handlebars.RegisterHelper("pretty", TemplateHelper.PrettyPrint);
+        }
+
         readonly Lazy<Func<object, string>> _summaryTemplate;
         readonly Lazy<Func<object, string>> _bodyTemplate;
 
@@ -37,21 +47,16 @@ namespace Seq.App.YouTrack
         /// </summary>
         public YouTrackIssuePoster()
         {
-            _summaryTemplate = new Lazy<Func<object, string>>(
-                () =>
-                    {
-                        var summaryTemplate = IssueSummaryTemplate;
-                        if (string.IsNullOrEmpty(summaryTemplate)) summaryTemplate = Resources.DefaultIssueSummaryTemplate;
-                        return Handlebars.Handlebars.Compile(summaryTemplate);
-                    });
+            _summaryTemplate =
+                new Lazy<Func<object, string>>(
+                    () =>
+                    Handlebars.Compile(IssueSummaryTemplate.IsSet() ? IssueSummaryTemplate : Resources.DefaultIssueSummaryTemplate));
 
-            _bodyTemplate = new Lazy<Func<object, string>>(
-                () =>
-                    {
-                        var bodyTemplate = IssueBodyTemplate;
-                        if (string.IsNullOrEmpty(bodyTemplate)) bodyTemplate = Resources.DefaultIssueBodyTemplate;
-                        return Handlebars.Handlebars.Compile(bodyTemplate);
-                    });
+
+            _bodyTemplate =
+                new Lazy<Func<object, string>>(
+                    () =>
+                    Handlebars.Compile(IssueBodyTemplate.IsSet() ? IssueBodyTemplate : Resources.DefaultIssueBodyTemplate));
         }
 
         /// <summary>
@@ -60,15 +65,18 @@ namespace Seq.App.YouTrack
         /// <param name="event"> The event.</param>
         public void On(Event<LogEventData> @event)
         {
-            var issueManagement = this.GetIssueManagement();
-            if (issueManagement == null) return;
+            var connection = GetConnection();
+            if (connection == null) return;
 
             try
             {
+                var issueManagement = new IssueManagement(connection);
+
                 dynamic issue = new Issue();
 
-                issue.Summary = EmailPlus.EmailReactor.FormatTemplate(this._summaryTemplate.Value, @event, this.Host);
-                issue.Description = EmailPlus.EmailReactor.FormatTemplate(this._bodyTemplate.Value, @event, this.Host);
+                var payload = GetPayload(@event);
+                issue.Summary = this._summaryTemplate.Value(payload);
+                issue.Description = this._bodyTemplate.Value(payload);
                 issue.ProjectShortName = this.ProjectId;
                 issue.Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
 
@@ -91,6 +99,35 @@ namespace Seq.App.YouTrack
             }
         }
 
+        object GetPayload(Event<LogEventData> @event)
+        {
+            IDictionary<string, object> properties =
+                (@event.Data.Properties ?? new Dictionary<string, object>()).ToDynamic() as IDictionary<string, object>;
+
+            var payload = new Dictionary<string, object>
+            {
+                { "$Id", @event.Id },
+                { "$UtcTimestamp", @event.TimestampUtc },
+                { "$LocalTimestamp", @event.Data.LocalTimestamp },
+                { "$Level", @event.Data.Level },
+                { "$MessageTemplate", @event.Data.MessageTemplate },
+                { "$Message", @event.Data.RenderedMessage },
+                { "$Exception", @event.Data.Exception },
+                { "$Properties", properties },
+                { "$EventType", "$" + @event.EventType.ToString("X8") },
+                { "$Instance", this.Host.InstanceName },
+                { "$ServerUri", this.Host.ListenUris.FirstOrDefault() },
+                { "$YouTrackProjectId", this.ProjectId }
+            }.ToDynamic() as IDictionary<string, object>;
+            
+            foreach (var property in properties)
+            {
+                payload[property.Key] = property.Value;
+            }
+
+            return payload;
+        }
+
         /// <summary>
         /// Gets you track URL.
         /// </summary>
@@ -99,18 +136,22 @@ namespace Seq.App.YouTrack
         /// </returns>
         UriBuilder GetYouTrackUri()
         {
-            return new UriBuilder(this.YouTrackUri);
+            try
+            {
+                return new UriBuilder(this.YouTrackUri);
+            }
+            catch (UriFormatException ex)
+            {
+                Log.Error(ex, "Failure Connecting to YouTrack: Invalid Url Format");
+            }   
+
+            return null;
         }
 
-        /// <summary>
-        /// Gets issue management.
-        /// </summary>
-        /// <returns>
-        /// The issue management.
-        /// </returns>
-        IssueManagement GetIssueManagement()
+        Connection GetConnection()
         {
             var uri = GetYouTrackUri();
+            if (uri == null) return null;
 
             try
             {
@@ -124,12 +165,12 @@ namespace Seq.App.YouTrack
                 if (this.Username.IsSet() && this.Password.IsSet())
                     connection.Authenticate(this.Username, this.Password);
 
-                return new IssueManagement(connection);
+                return connection;
             }
             catch (System.Exception ex)
             {
                 // failure connecting to YT
-                this.Log.Error(ex, "Failure Connecting to YouTrack");
+                Log.Error(ex, "Failure Connecting to YouTrack");
             }
 
             return null;

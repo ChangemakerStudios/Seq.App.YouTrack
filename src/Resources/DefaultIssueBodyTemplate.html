@@ -1,8 +1,11 @@
-﻿==Logged *{{$Level}}* Event ID *#{{$Id}}* At {{$LocalTimestamp}}==
-
-===[Event Link|{{{$ServerUri}}}#/events?filter=@Id%3D%3D%22{{$Id}}%22]===
+﻿===Log Level: *{{$Level}}*
+Event ID: *#{{$Id}}*
+Project ID: *{{$YouTrackProjectId}}*
+Timestamp: {{$LocalTimestamp}}
+Link to Seq: [Event Link|{{{$ServerUri}}}#/events?filter=@Id%3D%3D%22{{$Id}}%22]===
 
 ===Message===
+-----
 {monospace}{{$Message}}{monospace}
 
 {{#if $Exception}}
@@ -17,9 +20,6 @@
 -----
 {html}
 {{#each $Properties}}
-<div class="seq-event-property">
-    <div class="seq-property-name" title="{{@key}}" style="float:left;width:200px;overflow:hidden;font-family:monospace;font-size:13px;font-weight:bold;text-overflow:ellipsis;">{{@key}}</div>
-    <div class="seq-property-value" style="margin-left:245px;font-family:monospace;font-size:13px;word-wrap:break-word;white-space:pre-wrap;">{{pretty this}}</div>
-</div>
+<div class="seq-event-property"><div class="seq-property-name" title="{{@key}}" style="float:left;width:200px;overflow:hidden;font-family:monospace;font-size:13px;font-weight:bold;text-overflow:ellipsis;">{{@key}}</div><div class="seq-property-value" style="margin-left:245px;font-family:monospace;font-size:13px;word-wrap:break-word;white-space:pre-wrap;">{{pretty this}}</div></div>
 {{/each}}
 {html}

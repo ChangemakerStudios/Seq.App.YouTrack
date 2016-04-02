@@ -23,3 +23,4 @@
 * $EventType: Seq's event type field.
 * $Instance: Name of of the Seq instance.
 * $ServerUri: Url of the Seq instance.
+* $YouTrackProjectId: The project id entered into the settings.
