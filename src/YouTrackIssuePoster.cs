@@ -17,8 +17,6 @@ namespace Seq.App.YouTrack
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Dynamic;
     using System.IO;
     using System.Linq;
 
@@ -33,12 +31,9 @@ namespace Seq.App.YouTrack
     using Serilog.Formatting.Json;
     using Serilog.Parsing;
     using Serilog.Sinks.IOFile;
-    using Serilog.Sinks.RollingFile;
 
     using YouTrackSharp.Infrastructure;
     using YouTrackSharp.Issues;
-
-    using LogEventLevel = Seq.Apps.LogEvents.LogEventLevel;
 
     /// <summary>
     /// You track issue poster.
@@ -189,6 +184,8 @@ namespace Seq.App.YouTrack
             IDictionary<string, object> properties =
                 (@event.Data.Properties ?? new Dictionary<string, object>()).ToDynamic() as IDictionary<string, object>;
 
+            var serverUri = string.IsNullOrWhiteSpace(this.SeqBaseUri) ? Host.ListenUris.FirstOrDefault() : this.SeqBaseUri;
+
             var payload = new Dictionary<string, object>
             {
                 { "$Id", @event.Id },
@@ -201,7 +198,7 @@ namespace Seq.App.YouTrack
                 { "$Properties", properties },
                 { "$EventType", "$" + @event.EventType.ToString("X8") },
                 { "$Instance", this.Host.InstanceName },
-                { "$ServerUri", this.Host.ListenUris.FirstOrDefault() },
+                { "$ServerUri", serverUri },
                 { "$YouTrackProjectId", this.ProjectId }
             }.ToDynamic() as IDictionary<string, object>;
             

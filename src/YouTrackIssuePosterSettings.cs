@@ -32,6 +32,12 @@ namespace Seq.App.YouTrack
         public string YouTrackUri { get; set; }
 
         /// <summary>
+        /// Gets or sets the Base Url for Seq.
+        /// </summary>
+        [SeqAppSetting(DisplayName = "Seq Base Url (Optional)", IsOptional = true, HelpText = "Override the Base Url for the permalink generation")]
+        public string SeqBaseUri { get; set; }
+
+        /// <summary>
         ///     Gets or sets the name of the project.
         /// </summary>
         /// <value>
