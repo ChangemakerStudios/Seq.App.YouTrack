@@ -9,6 +9,7 @@
         <iconUrl>https://raw.githubusercontent.com/CaptiveAire/Seq.App.YouTrack/master/asset/seq-app-youtrack.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</description>
+        <releaseNotes>Updated for Seq v4.x and Serilog</releaseNotes>
         <language>en-US</language>
         <tags>seq-app youtrack</tags>
     </metadata>

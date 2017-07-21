@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Serilog.Sinks.File;
+
 namespace Seq.App.YouTrack
 {
     using System;
@@ -30,7 +32,6 @@ namespace Seq.App.YouTrack
     using Serilog.Events;
     using Serilog.Formatting.Json;
     using Serilog.Parsing;
-    using Serilog.Sinks.IOFile;
 
     using YouTrackSharp.Infrastructure;
     using YouTrackSharp.Issues;
@@ -113,10 +114,8 @@ namespace Seq.App.YouTrack
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception ex) when (LogError(ex, "Failure Creating Issue on YouTrack {YouTrackUrl}", GetYouTrackUri().ToFormattedUrl()))
             {
-                // failure creating issue
-                this.Log.Error(ex, "Failure Creating Issue on YouTrack {YouTrackUrl}", GetYouTrackUri().ToFormattedUrl());
             }
         }
 
@@ -222,10 +221,10 @@ namespace Seq.App.YouTrack
             {
                 return new UriBuilder(this.YouTrackUri);
             }
-            catch (UriFormatException ex)
+            catch (UriFormatException ex) when (LogError(ex, "Failure Connecting to YouTrack: Invalid Url Format"))
             {
-                Log.Error(ex, "Failure Connecting to YouTrack: Invalid Url Format");
-            }   
+                // logged in when
+            }
 
             return null;
         }
@@ -249,13 +248,24 @@ namespace Seq.App.YouTrack
 
                 return connection;
             }
-            catch (System.Exception ex)
+            catch (System.Exception ex) when (LogError(ex, "Failure Connecting to YouTrack"))
             {
                 // failure connecting to YT
-                Log.Error(ex, "Failure Connecting to YouTrack");
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Logs the error
+        /// </summary>
+        /// <param name="ex">The ex.</param>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
+        static bool LogError(Exception ex, string message, params object[] propertyValues)
+        {
+            Serilog.Log.Error(ex, message, propertyValues);
+            return true;
         }
     }
 }
