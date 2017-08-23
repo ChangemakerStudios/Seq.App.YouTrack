@@ -109,3 +109,4 @@ UpgradeLog*.XML
 *.sln.ide/*
 /.idea
 *.iml
+/.vs/Seq.App.YouTrack/v15/sqlite3

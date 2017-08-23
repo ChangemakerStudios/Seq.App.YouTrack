@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/CaptiveAire/Seq.App.YouTrack/master/asset/seq-app-youtrack.png" width="32" height="32" /> Seq.App.YouTrack
+<img src="https://github.com/CaptiveAire/Seq.App.YouTrack/blob/master/asset/seq-app-youtrack.png?raw=true" width="32" height="32" /> Seq.App.YouTrack
 =================
 
 [![NuGet version](https://badge.fury.io/nu/Seq.App.YouTrack.svg)](https://badge.fury.io/nu/Seq.App.YouTrack) [![Build status](https://ci.appveyor.com/api/projects/status/vkogqinnmjjeyh9l/branch/master?svg=true)](https://ci.appveyor.com/project/Jaben/seq-app-youtrack/branch/master)
