@@ -1,4 +1,4 @@
-// Copyright 2014-2016 CaptiveAire Systems
+// Copyright 2014-2017 CaptiveAire Systems
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,5 +106,12 @@ namespace Seq.App.YouTrack
         [SeqAppSetting(DisplayName = "Attach Event?", IsOptional = true, HelpText = "Attaches a copy of the log event to the issue.",
             InputType = SettingInputType.Checkbox)]
         public bool AttachCopyOfEventToIssue { get; set; }
+
+        /// <summary>
+        /// Should attach a copy of the event to the issue.
+        /// </summary>
+        [SeqAppSetting(DisplayName = "Allow Duplicate Issue Creation?", IsOptional = true, HelpText = "Allow duplicates issues to be posted to YouTrack.",
+            InputType = SettingInputType.Checkbox)]
+        public bool AllowDuplicateIssueCreation { get; set; }
     }
 }

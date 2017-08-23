@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Seq.App.YouTrack")]
-[assembly: AssemblyCopyright("Copyright CaptiveAire © 2014-2016")]
+[assembly: AssemblyCopyright("Copyright CaptiveAire © 2014-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

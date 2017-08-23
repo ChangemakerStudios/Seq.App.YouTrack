@@ -1,4 +1,4 @@
-﻿// Copyright 2014-2016 CaptiveAire Systems
+﻿// Copyright 2014-2017 CaptiveAire Systems
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using Seq.App.YouTrack.CreatedIssues;
 
 using Serilog.Sinks.File;
 
@@ -78,11 +80,15 @@ namespace Seq.App.YouTrack
 
             try
             {
+                if (this.IsDuplicateIssue(@event))
+                {
+                    return;
+                }
+
                 var issueManagement = new IssueManagement(connection);
-
                 dynamic issue = new Issue();
-
                 var payload = GetPayload(@event);
+
                 issue.Summary = this._summaryTemplate.Value(payload);
                 issue.Description = this._bodyTemplate.Value(payload);
                 issue.ProjectShortName = this.ProjectId;
@@ -92,6 +98,9 @@ namespace Seq.App.YouTrack
 
                 if (issueNumber.IsSet())
                 {
+                    // record as event...
+                    LogIssueCreation(@event, issueNumber);
+
                     Log.Information(
                         "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
                         issueNumber,
@@ -117,6 +126,43 @@ namespace Seq.App.YouTrack
             catch (System.Exception ex) when (LogError(ex, "Failure Creating Issue on YouTrack {YouTrackUrl}", GetYouTrackUri().ToFormattedUrl()))
             {
             }
+        }
+
+        void LogIssueCreation(Event<LogEventData> @event, string issueNumber)
+        {
+            try
+            {
+                var repo = new CreatedIssueRespository(App.StoragePath);
+                var createdIssueEvent = new CreatedIssueEvent() { SeqId = @event.Id, YouTrackId = issueNumber };
+                repo.Insert(createdIssueEvent);
+            }
+            catch (Exception e) when (LogError(e, "Failure Inserting Issue Creation Record"))
+            {
+            }
+        }
+
+        bool IsDuplicateIssue(Event<LogEventData> @event)
+        {
+            if (AllowDuplicateIssueCreation)
+            {
+                return false;
+            }
+
+            var repo = new CreatedIssueRespository(App.StoragePath);
+            var existingIssue = repo.BySeqId(@event.Id);
+
+            if (existingIssue != null)
+            {
+                // event has already been posted
+                Log.Warning(
+                    "Issue {YouTrackIssueNumber} Already Exists in YouTrack {IssueUrl} -- Duplicate Not Created",
+                    existingIssue.YouTrackId,
+                    $"{this.GetYouTrackUri().ToFormattedUrl()}/issue/{existingIssue.YouTrackId}");
+
+                return true;
+            }
+
+            return false;
         }
 
         string GetJsonEventFile(Event<LogEventData> evt, string issueNumber)
@@ -200,7 +246,7 @@ namespace Seq.App.YouTrack
                 { "$ServerUri", serverUri },
                 { "$YouTrackProjectId", this.ProjectId }
             }.ToDynamic() as IDictionary<string, object>;
-            
+
             foreach (var property in properties)
             {
                 payload[property.Key] = property.Value;
