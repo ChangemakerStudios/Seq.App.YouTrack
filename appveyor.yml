@@ -1,4 +1,5 @@
-﻿platform: "Any CPU"
+﻿image: Visual Studio 2017
+platform: "Any CPU"
 configuration: Release
 
 before_build:
