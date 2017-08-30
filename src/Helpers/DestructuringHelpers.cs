@@ -8,34 +8,34 @@
     {
         public static object ToDynamic(this object o)
         {
-            var dictionary = o as IEnumerable<KeyValuePair<string, object>>;
-            if (dictionary != null)
+            switch (o)
             {
-                var result = new ExpandoObject();
-                var asDict = (IDictionary<string, object>)result;
-                foreach (var kvp in dictionary)
-                {
-                    asDict.Add(kvp.Key, ToDynamic(kvp.Value));
-                }
-                return result;
-            }
+                case IEnumerable<KeyValuePair<string, object>> dictionary:
+                    var result = new ExpandoObject();
+                    var asDict = (IDictionary<string, object>)result;
+                    foreach (var kvp in dictionary)
+                    {
+                        asDict.Add(kvp.Key, ToDynamic(kvp.Value));
+                    }
+                    return result;
 
-            var enumerable = o as IEnumerable<object>;
-            if (enumerable != null)
-                return enumerable.Select(ToDynamic).ToArray();
+                case IEnumerable<object> enumerable:
+                    return enumerable.Select(ToDynamic).ToArray();
+            }
 
             return o;
         }
 
         public static object FromDynamic(this object o)
         {
-            var dictionary = o as IEnumerable<KeyValuePair<string, object>>;
-            if (dictionary != null)
-                return dictionary.ToDictionary(kvp => kvp.Key, kvp => FromDynamic(kvp.Value));
+            switch (o)
+            {
+                case IEnumerable<KeyValuePair<string, object>> dictionary:
+                    return dictionary.ToDictionary(kvp => kvp.Key, kvp => FromDynamic(kvp.Value));
 
-            var enumerable = o as IEnumerable<object>;
-            if (enumerable != null)
-                return enumerable.Select(FromDynamic).ToArray();
+                case IEnumerable<object> enumerable:
+                    return enumerable.Select(FromDynamic).ToArray();
+            }
 
             return o;
         }

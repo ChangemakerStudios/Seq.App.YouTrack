@@ -31,12 +31,22 @@ namespace Seq.App.YouTrack.Helpers
         public static void PrettyPrint(TextWriter output, object context, object[] arguments)
         {
             var value = arguments.FirstOrDefault();
-            if (value == null)
-                output.WriteSafeString("null");
-            else if (value is IEnumerable<object> || value is IEnumerable<KeyValuePair<string, object>>)
-                output.WriteSafeString(JsonConvert.SerializeObject(value.FromDynamic()));
-            else
-                output.WriteSafeString(value.ToString());
+
+            switch (value)
+            {
+                case null:
+                    output.WriteSafeString("null");
+                    break;
+
+                case IEnumerable<object> _:
+                case IEnumerable<KeyValuePair<string, object>> _:
+                    output.WriteSafeString(JsonConvert.SerializeObject(value.FromDynamic()));
+                    break;
+
+                default:
+                    output.WriteSafeString(value.ToString());
+                    break;
+            }
         }
     }
 }
