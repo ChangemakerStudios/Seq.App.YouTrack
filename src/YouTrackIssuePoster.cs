@@ -195,18 +195,15 @@ namespace Seq.App.YouTrack
 
         LogEventPropertyValue CreatePropertyValue(object value)
         {
-            var d = value as IDictionary<string, object>;
-            if (d != null)
+            if (value is IDictionary<string, object> d)
             {
-                object tt;
-                d.TryGetValue("$typeTag", out tt);
+                d.TryGetValue("$typeTag", out var tt);
                 return new StructureValue(
                     d.Where(kvp => kvp.Key != "$typeTag").Select(kvp => CreateProperty(kvp.Key, kvp.Value)),
                     tt as string);
             }
 
-            var dd = value as IDictionary;
-            if (dd != null)
+            if (value is IDictionary dd)
             {
                 return new DictionaryValue(dd.Keys
                     .Cast<object>()
@@ -308,9 +305,9 @@ namespace Seq.App.YouTrack
         /// <param name="ex">The ex.</param>
         /// <param name="message">The message.</param>
         /// <returns></returns>
-        static bool LogError(Exception ex, string message, params object[] propertyValues)
+        bool LogError(Exception ex, string message, params object[] propertyValues)
         {
-            Host.Log.Error(ex, message, propertyValues);
+            Log.Error(ex, message, propertyValues);
             return true;
         }
     }
