@@ -14,7 +14,7 @@
         <tags>seq-app youtrack</tags>
     </metadata>
     <files>
-        <file src="bin\Release\Seq.App.YouTrack.dll" target="lib\net45\Seq.App.YouTrack.dll" />
-        <file src="bin\Release\Seq.App.YouTrack.pdb" target="lib\net45\Seq.App.YouTrack.pdb" />
+        <file src="bin\Release\net45\Seq.App.YouTrack.dll" target="lib\net45\Seq.App.YouTrack.dll" />
+        <file src="bin\Release\net45\Seq.App.YouTrack.pdb" target="lib\net45\Seq.App.YouTrack.pdb" />
     </files>
 </package>
