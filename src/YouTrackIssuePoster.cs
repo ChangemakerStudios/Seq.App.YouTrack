@@ -310,7 +310,7 @@ namespace Seq.App.YouTrack
         /// <returns></returns>
         static bool LogError(Exception ex, string message, params object[] propertyValues)
         {
-            Serilog.Log.Error(ex, message, propertyValues);
+            Host.Log.Error(ex, message, propertyValues);
             return true;
         }
     }
