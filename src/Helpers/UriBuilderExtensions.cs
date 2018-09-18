@@ -39,7 +39,17 @@ namespace Seq.App.YouTrack.Helpers
             if (uri == null)
                 throw new ArgumentNullException(nameof(uri));
 
-            var url = uri.ToString().Replace(":80", string.Empty);
+            string url;
+
+            if (uri.Uri.IsDefaultPort && uri.Port != -1)
+            {
+                uri.Port = -1;
+                url = uri.ToString();
+            }
+            else
+            {
+                url = uri.ToString();
+            }
 
             if (url.EndsWith("/"))
             {
