@@ -6,7 +6,6 @@
     <Description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</Description>
     <PackageIconUrl>https://github.com/CaptiveAire/Seq.App.YouTrack/raw/master/asset/seq-app-youtrack.png?raw=true</PackageIconUrl>
     <PackageId>Seq.App.YouTrack</PackageId>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
