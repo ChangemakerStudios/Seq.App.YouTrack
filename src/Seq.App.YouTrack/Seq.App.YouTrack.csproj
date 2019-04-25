@@ -1,24 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <VersionPrefix>2.1.0</VersionPrefix>
     <Authors>CaptiveAire Systems</Authors>
     <Description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</Description>
     <PackageIconUrl>https://github.com/CaptiveAire/Seq.App.YouTrack/raw/master/asset/seq-app-youtrack.png?raw=true</PackageIconUrl>
     <PackageId>Seq.App.YouTrack</PackageId>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Seq v5.1+ Only! Supports Bearer Token Auth in YouTrack. Bug fixes.</PackageReleaseNotes>
     <PackageTags>seq-app youtrack</PackageTags>
-    <PackageVersion>2.1.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Handlebars.Net" Version="1.9.5" />
@@ -37,7 +30,6 @@
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="app.config" />
     <None Include="Seq.App.YouTrack.nuspec">
       <SubType>Designer</SubType>
     </None>
