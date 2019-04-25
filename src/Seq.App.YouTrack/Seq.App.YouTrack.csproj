@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <VersionPrefix>2.1.0</VersionPrefix>
     <Authors>CaptiveAire Systems</Authors>
     <Description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</Description>
     <PackageIconUrl>https://github.com/CaptiveAire/Seq.App.YouTrack/raw/master/asset/seq-app-youtrack.png?raw=true</PackageIconUrl>
