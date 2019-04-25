@@ -12,11 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.IO;
+
 namespace Seq.App.YouTrack.Helpers
 {
     public static class StringExtensions
     {
         public static bool IsSet(this string str) => !string.IsNullOrWhiteSpace(str);
         public static bool IsNotSet(this string str) => string.IsNullOrWhiteSpace(str);
+
+        public static Stream ToStream(this string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+
+            var ms = new MemoryStream();
+
+            using (var writer = new StreamWriter(ms))
+            {
+                writer.Write(str);
+                writer.Flush();
+                ms.Position = 0;
+
+                return ms;
+            }
+        }
     }
 }

@@ -32,12 +32,6 @@ namespace Seq.App.YouTrack
         public string YouTrackUri { get; set; }
 
         /// <summary>
-        /// Gets or sets the Base Url for Seq.
-        /// </summary>
-        [SeqAppSetting(DisplayName = "Seq Base Url (Optional)", IsOptional = true, HelpText = "Override the Base Url for the permalink generation")]
-        public string SeqBaseUri { get; set; }
-
-        /// <summary>
         ///     Gets or sets the name of the project.
         /// </summary>
         /// <value>
@@ -86,7 +80,16 @@ namespace Seq.App.YouTrack
         /// <value>
         ///     The username.
         /// </value>
-        [SeqAppSetting(DisplayName = "Username", IsOptional = false, HelpText = "Authenticated username for YouTrack.")]
+        [SeqAppSetting(DisplayName = "Bearer Token", IsOptional = true, HelpText = "Use Bearer Authentication: enter the permanent token generated to authenticate against YouTrack.", InputType = SettingInputType.Password)]
+        public string BearerToken { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the username.
+        /// </summary>
+        /// <value>
+        ///     The username.
+        /// </value>
+        [SeqAppSetting(DisplayName = "Username", IsOptional = true, HelpText = "Use Username/Password Authentication: Enter Username for YouTrack.")]
         public string Username { get; set; }
 
         /// <summary>
@@ -95,7 +98,7 @@ namespace Seq.App.YouTrack
         /// <value>
         ///     The password.
         /// </value>
-        [SeqAppSetting(DisplayName = "Password", IsOptional = false, HelpText = "Authenticated username for YouTrack.",
+        [SeqAppSetting(DisplayName = "Password", IsOptional = true, HelpText = "Use Username/Password Authentication: Enter Password for YouTrack.",
             InputType = SettingInputType.Password)]
         public string Password { get; set; }
 
