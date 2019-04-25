@@ -9,12 +9,12 @@
         <iconUrl>https://github.com/CaptiveAire/Seq.App.YouTrack/raw/master/asset/seq-app-youtrack.png?raw=true</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Create issues in YouTrack from Seq (getseq.net) entries in one click.</description>
-        <releaseNotes>Updated for Seq v4.x and Serilog</releaseNotes>
+        <releaseNotes>Updated to latest LiteDb</releaseNotes>
         <language>en-US</language>
         <tags>seq-app youtrack</tags>
     </metadata>
     <files>
-        <file src="bin\Release\net45\Seq.App.YouTrack.dll" target="lib\net45\Seq.App.YouTrack.dll" />
-        <file src="bin\Release\net45\Seq.App.YouTrack.pdb" target="lib\net45\Seq.App.YouTrack.pdb" />
+        <file src="bin\Release\net452\Seq.App.YouTrack.dll" target="lib\net452\Seq.App.YouTrack.dll" />
+        <file src="bin\Release\net452\Seq.App.YouTrack.pdb" target="lib\net452\Seq.App.YouTrack.pdb" />
     </files>
 </package>
