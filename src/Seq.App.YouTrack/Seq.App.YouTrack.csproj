@@ -11,6 +11,7 @@
     <RepositoryUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Seq v5.1+ Only! Supports Bearer Token Auth in YouTrack. Bug fixes.</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageTags>seq-app youtrack</PackageTags>
   </PropertyGroup>
   <ItemGroup>
@@ -23,19 +24,13 @@
     <PackageReference Include="YouTrackSharp" Version="2018.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Seq.App.YouTrack.nuspec">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="../../LICENSE" Pack="true" PackagePath="" />
     <None Include="./obj/publish/**/*" Exclude="./obj/publish/Seq.App.YouTrack.dll;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
   </ItemGroup>
 </Project>
