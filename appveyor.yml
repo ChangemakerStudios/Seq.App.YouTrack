@@ -1,10 +1,13 @@
 ﻿image: Visual Studio 2019 Preview
+version: 2.1.{build}
 platform: "Any CPU"
 configuration: Release
 
-before_build:
-- nuget restore
+# before_build:
+# - nuget restore
+
+build_script:
+  - cmd: PowerShell -Version 3.0 .\build.ps1
 
 after_build:
-- nuget pack src\Seq.App.YouTrack.nuspec -version %APPVEYOR_BUILD_VERSION%
-- appveyor PushArtifact Seq.App.YouTrack.%APPVEYOR_BUILD_VERSION%.nupkg
+  - appveyor PushArtifact artifacts\Seq.App.YouTrack.%APPVEYOR_BUILD_VERSION%.nupkg

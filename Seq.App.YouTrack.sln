@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.App.YouTrack", "src\Seq.App.YouTrack.csproj", "{14488E5D-9556-4B7E-8FCC-A3A70F77B280}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.App.YouTrack", "src\Seq.App.YouTrack\Seq.App.YouTrack.csproj", "{14488E5D-9556-4B7E-8FCC-A3A70F77B280}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{EF8E19FF-0CAB-4E2E-B76F-F019A7C35D58}"
 	ProjectSection(SolutionItems) = preProject

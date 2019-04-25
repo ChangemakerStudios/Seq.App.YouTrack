@@ -16,12 +16,12 @@
     <PackageId>Seq.App.YouTrack</PackageId>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</PackageProjectUrl>
-    <PackageReleaseNotes>Supports Bearer Token Auth in YouTrack. Bug fixes.</PackageReleaseNotes>
+    <PackageReleaseNotes>Seq v5.1+ Only! Supports Bearer Token Auth in YouTrack. Bug fixes.</PackageReleaseNotes>
     <PackageTags>seq-app youtrack</PackageTags>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.1.0</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Handlebars.Net" Version="1.10.1" />
+    <PackageReference Include="Handlebars.Net" Version="1.9.5" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Seq.Apps" Version="5.1.0" />
@@ -41,5 +41,9 @@
     <None Include="Seq.App.YouTrack.nuspec">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="./obj/publish/**/*" Exclude="./obj/publish/Seq.App.YouTrack.dll;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
   </ItemGroup>
 </Project>
