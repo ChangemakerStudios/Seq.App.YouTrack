@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <TargetFramework>net452</TargetFramework>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
@@ -17,9 +16,9 @@
     <PackageId>Seq.App.YouTrack</PackageId>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</PackageProjectUrl>
-    <PackageReleaseNotes>Updated for Seq v4.x and Serilog</PackageReleaseNotes>
+    <PackageReleaseNotes>Supports Bearer Token Auth in YouTrack. Bug fixes.</PackageReleaseNotes>
     <PackageTags>seq-app youtrack</PackageTags>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,7 +42,7 @@
     <PackageReference Include="Costura.Fody" Version="4.0.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Fody" Version="5.0.0">
+    <PackageReference Include="Fody" Version="5.0.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Handlebars.Net" Version="1.10.1" />
@@ -53,14 +52,14 @@
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="YouTrackSharp" Version="2018.4.0" />
-    <PackageReference Include="Handlebars.Net" Version="1.9.0" />
+    <PackageReference Include="Handlebars.Net" Version="1.10.1" />
     <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Seq.Apps" Version="3.4.17" />
-    <PackageReference Include="Serilog" Version="2.5.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="3.2.0" />
-    <PackageReference Include="YouTrackSharp" Version="2.0.31" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Seq.Apps" Version="5.1.0" />
+    <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
+    <PackageReference Include="YouTrackSharp" Version="2018.4.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
