@@ -17,5 +17,6 @@ namespace Seq.App.YouTrack.Helpers
     public static class StringExtensions
     {
         public static bool IsSet(this string str) => !string.IsNullOrWhiteSpace(str);
+        public static bool IsNotSet(this string str) => string.IsNullOrWhiteSpace(str);
     }
 }

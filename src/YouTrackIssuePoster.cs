@@ -51,6 +51,7 @@ namespace Seq.App.YouTrack
 
         readonly Lazy<Func<object, string>> _summaryTemplate;
         readonly Lazy<Func<object, string>> _bodyTemplate;
+        readonly Lazy<Func<object, string>> _projectIdTemplate;
 
         /// <summary>
         /// Default constructor.
@@ -67,6 +68,11 @@ namespace Seq.App.YouTrack
                 new Lazy<Func<object, string>>(
                     () =>
                     Handlebars.Compile(IssueBodyTemplate.IsSet() ? IssueBodyTemplate : Resources.DefaultIssueBodyTemplate));
+
+            _projectIdTemplate =
+                new Lazy<Func<object, string>>(
+                    () =>
+                    Handlebars.Compile(ProjectId));
         }
 
         /// <summary>
@@ -91,8 +97,14 @@ namespace Seq.App.YouTrack
 
                 issue.Summary = this._summaryTemplate.Value(payload);
                 issue.Description = this._bodyTemplate.Value(payload);
-                issue.ProjectShortName = this.ProjectId;
+                issue.ProjectShortName = this._projectIdTemplate.Value(payload);
                 issue.Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
+
+                if (issue.ProjectShortName.IsNotSet())
+                {
+                    Log.Error("Failure posting to YouTrack: Project Short Name (ID) is empty");
+                    return;
+                }
 
                 string issueNumber = issueManagement.CreateIssue(issue);
 

@@ -43,7 +43,7 @@ namespace Seq.App.YouTrack
         /// <value>
         ///     The name of the project.
         /// </value>
-        [SeqAppSetting(DisplayName = "Project ID", IsOptional = false, HelpText = "Project ID (short name) to post YouTrack issue.")]
+        [SeqAppSetting(DisplayName = "Project ID", IsOptional = false, HelpText = "Project ID (short name) template to post YouTrack issue (supports handlebars).")]
         public string ProjectId { get; set; }
 
         /// <summary>
