@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 using HandlebarsDotNet;
 
@@ -244,10 +245,10 @@ namespace Seq.App.YouTrack
                     { "$LocalTimestamp", @event.Data.LocalTimestamp },
                     { "$Level", @event.Data.Level },
                     { "$MessageTemplate", @event.Data.MessageTemplate },
-                    { "$Message", @event.Data.RenderedMessage },
+                    { "$Message", HttpUtility.HtmlDecode(@event.Data.RenderedMessage) },
                     { "$Exception", @event.Data.Exception },
                     { "$Properties", properties },
-                    { "$EventType", "$" + @event.EventType.ToString("X8") },
+                    { "$EventType", $"${@event.EventType:X8}" },
                     { "$Instance", this.Host.InstanceName },
                     { "$ServerUri", Host.BaseUri },
                     { "$YouTrackProjectId", this.ProjectId }
