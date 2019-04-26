@@ -11,8 +11,6 @@ namespace Seq.App.YouTrack.CreatedIssues
             this.Created = DateTime.Now;
         }
 
-        public int Id { get; set; }
-
         public string SeqId { get; set; }
 
         public string YouTrackId { get; set; }

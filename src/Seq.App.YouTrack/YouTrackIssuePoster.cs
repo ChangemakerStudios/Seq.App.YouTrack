@@ -5,12 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using HandlebarsDotNet;
 
 using Seq.App.YouTrack.CreatedIssues;
 using Seq.App.YouTrack.Helpers;
+using Seq.App.YouTrack.Resources;
 using Seq.Apps;
 using Seq.Apps.LogEvents;
 
@@ -18,7 +20,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
-using Serilog.Sinks.File;
 
 using YouTrackSharp;
 using YouTrackSharp.Issues;
@@ -31,23 +32,20 @@ namespace Seq.App.YouTrack
     /// You track issue poster.
     /// </summary>
     [SeqApp("YouTrack Issue Poster", Description = "Create a YouTrack issue from an event.")]
-    public partial class YouTrackIssuePoster : SeqApp, IDisposable, ISubscribeToAsync<LogEventData>
+    public partial class YouTrackIssuePoster : SeqApp, ISubscribeToAsync<LogEventData>
     {
         readonly Lazy<Func<object, string>> _bodyTemplate;
         readonly Lazy<Func<object, string>> _projectIdTemplate;
         readonly Lazy<Func<object, string>> _summaryTemplate;
-
-        CreatedIssueRepository _repository;
 
         static YouTrackIssuePoster()
         {
             Handlebars.RegisterHelper("pretty", TemplateHelper.PrettyPrint);
         }
 
-        protected override void OnAttached()
+        CreatedIssueRepository GetIssueRepositoryInstance()
         {
-            // create the LiteDb;
-            this._repository = new CreatedIssueRepository(this.App.StoragePath);
+            return new CreatedIssueRepository(this.App.StoragePath);
         }
 
         /// <summary>
@@ -56,10 +54,10 @@ namespace Seq.App.YouTrack
         public YouTrackIssuePoster()
         {
             _summaryTemplate = new Lazy<Func<object, string>>(
-                () => Handlebars.Compile(IssueSummaryTemplate.IsSet() ? IssueSummaryTemplate : Resources.DefaultIssueSummaryTemplate));
+                () => Handlebars.Compile(IssueSummaryTemplate.IsSet() ? IssueSummaryTemplate : TemplateResources.DefaultIssueSummaryTemplate));
 
             _bodyTemplate = new Lazy<Func<object, string>>(
-                () => Handlebars.Compile(IssueBodyTemplate.IsSet() ? IssueBodyTemplate : Resources.DefaultIssueBodyTemplate));
+                () => Handlebars.Compile(IssueBodyTemplate.IsSet() ? IssueBodyTemplate : TemplateResources.DefaultIssueBodyTemplate));
 
             _projectIdTemplate = new Lazy<Func<object, string>>(() => Handlebars.Compile(ProjectId));
         }
@@ -100,9 +98,10 @@ namespace Seq.App.YouTrack
                     LogIssueCreation(@event, issueNumber);
 
                     Log.Information(
-                        "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl}",
+                        "Issue {YouTrackIssueNumber} Created in YouTrack {IssueUrl} Based on {SeqId}",
                         issueNumber,
-                        $"{GetYouTrackUri().ToFormattedUrl()}/issue/{issueNumber}");
+                        $"{GetYouTrackUri().ToFormattedUrl()}/issue/{issueNumber}",
+                        @event.Id);
 
                     await issueManagement.ApplyCommand(
                             issueNumber,
@@ -114,11 +113,11 @@ namespace Seq.App.YouTrack
                     {
                         var file = GetJsonEventFile(@event, issueNumber);
 
-                        using (var jsonFileStream = file.ToStream())
+                        var jsonFileData = File.ReadAllText(file, Encoding.UTF8);
 
+                        using (var fileStream = await jsonFileData.ToStream().ConfigureAwait(false))
                         {
-                            await issueManagement.AttachFileToIssue(issueNumber, $"{issueNumber}.json", jsonFileStream)
-                                .ConfigureAwait(false);
+                            await issueManagement.AttachFileToIssue(issueNumber, $"{issueNumber}.json", fileStream).ConfigureAwait(false);
                         }
 
                         try
@@ -141,9 +140,11 @@ namespace Seq.App.YouTrack
         {
             try
             {
-                var repo = new CreatedIssueRepository(App.StoragePath);
-                var createdIssueEvent = new CreatedIssueEvent { SeqId = @event.Id, YouTrackId = issueNumber };
-                repo.Insert(createdIssueEvent);
+                using (var repository = GetIssueRepositoryInstance())
+                {
+                    var createdIssueEvent = new CreatedIssueEvent { SeqId = @event.Id, YouTrackId = issueNumber };
+                    repository.Insert(createdIssueEvent);
+                }
             }
             catch (Exception e) when (LogError(e, "Failure Inserting Issue Creation Record"))
             {
@@ -157,7 +158,12 @@ namespace Seq.App.YouTrack
                 return false;
             }
 
-            var existingIssue = this._repository.BySeqId(@event.Id);
+            CreatedIssueEvent existingIssue = null;
+
+            using (var repository = GetIssueRepositoryInstance())
+            {
+                existingIssue = repository.BySeqId(@event.Id);
+            }
 
             // not duplicate
             if (existingIssue == null)
@@ -165,12 +171,12 @@ namespace Seq.App.YouTrack
 
             // event has already been posted
             this.Log.Warning(
-                "Issue {YouTrackIssueNumber} Already Exists in YouTrack {IssueUrl} -- Duplicate Not Created",
+                "Issue {YouTrackIssueNumber} already exists for {SeqId} in YouTrack {IssueUrl}",
                 existingIssue.YouTrackId,
-                $"{this.GetYouTrackUri().ToFormattedUrl()}/issue/{existingIssue.YouTrackId}");
+                $"{this.GetYouTrackUri().ToFormattedUrl()}/issue/{existingIssue.YouTrackId}",
+                @event.Id);
 
             return true;
-
         }
 
         string GetJsonEventFile(Event<LogEventData> evt, string issueNumber)
@@ -187,10 +193,8 @@ namespace Seq.App.YouTrack
 
             string logFilePath = Path.Combine(App.StoragePath, string.Format($"SeqAppYouTrack-{issueNumber}.json"));
 
-            using (var jsonSink = new FileSink(logFilePath, new JsonFormatter(), null))
+            using (var logger = new LoggerConfiguration().WriteTo.File(new JsonFormatter(), logFilePath).CreateLogger())
             {
-                var logger = new LoggerConfiguration().WriteTo.Sink(jsonSink, LogEventLevel.Verbose).CreateLogger();
-
                 logger.Write(logEvent);
             }
 
@@ -314,11 +318,6 @@ namespace Seq.App.YouTrack
         {
             Log.Error(ex, message, propertyValues);
             return true;
-        }
-
-        public void Dispose()
-        {
-            this._repository?.Dispose();
         }
     }
 }
