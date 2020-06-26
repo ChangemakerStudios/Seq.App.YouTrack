@@ -127,22 +127,11 @@ namespace Seq.App.YouTrack
 
                     if (AttachCopyOfEventToIssue)
                     {
-                        var file = GetJsonEventFile(@event, issueNumber);
+                        var json = this.GetEventJson(@event);
 
-                        var jsonFileData = File.ReadAllText(file, Encoding.UTF8);
-
-                        using (var fileStream = await jsonFileData.ToStream().ConfigureAwait(false))
+                        using (var fileStream = await json.ToStream().ConfigureAwait(false))
                         {
                             await issueManagement.AttachFileToIssue(issueNumber, $"{issueNumber}.json", fileStream).ConfigureAwait(false);
-                        }
-
-                        try
-                        {
-                            File.Delete(file);
-                        }
-                        catch
-                        {
-                            // can't say I care too much...
                         }
                     }
                 }
@@ -195,7 +184,7 @@ namespace Seq.App.YouTrack
             return true;
         }
 
-        string GetJsonEventFile(Event<LogEventData> evt, string issueNumber)
+        string GetEventJson(Event<LogEventData> evt)
         {
             var parser = new MessageTemplateParser();
             var properties =
@@ -209,13 +198,7 @@ namespace Seq.App.YouTrack
                 parser.Parse(evt.Data.MessageTemplate),
                 properties);
 
-            string logFilePath = Path.Combine(App.StoragePath, string.Format($"SeqAppYouTrack-{issueNumber}.json"));
-
-            var json = JsonConvert.SerializeObject(logEvent, Formatting.Indented);
-
-            File.WriteAllText(logFilePath, json, Encoding.UTF8);
-
-            return logFilePath;
+            return JsonConvert.SerializeObject(logEvent, Formatting.Indented);
         }
 
         LogEventProperty CreateProperty(string name, object value) => new LogEventProperty(name, CreatePropertyValue(value));
