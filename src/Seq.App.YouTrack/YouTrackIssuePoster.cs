@@ -23,6 +23,8 @@ using System.Web;
 
 using HandlebarsDotNet;
 
+using Newtonsoft.Json;
+
 using Seq.App.YouTrack.CreatedIssues;
 using Seq.App.YouTrack.Helpers;
 using Seq.App.YouTrack.Resources;
@@ -196,7 +198,9 @@ namespace Seq.App.YouTrack
         string GetJsonEventFile(Event<LogEventData> evt, string issueNumber)
         {
             var parser = new MessageTemplateParser();
-            var properties = (evt.Data.Properties ?? new Dictionary<string, object>()).Select(kvp => CreateProperty(kvp.Key, kvp.Value));
+            var properties =
+                (evt.Data.Properties ?? new Dictionary<string, object>()).Select(
+                    kvp => CreateProperty(kvp.Key, kvp.Value));
 
             var logEvent = new LogEvent(
                 evt.Data.LocalTimestamp,
@@ -207,11 +211,9 @@ namespace Seq.App.YouTrack
 
             string logFilePath = Path.Combine(App.StoragePath, string.Format($"SeqAppYouTrack-{issueNumber}.json"));
 
-            using (var logger = new LoggerConfiguration().AuditTo.File(new JsonFormatter(), logFilePath)
-                .CreateLogger())
-            {
-                logger.Write(logEvent);
-            }
+            var json = JsonConvert.SerializeObject(logEvent, Formatting.Indented);
+
+            File.WriteAllText(logFilePath, json, Encoding.UTF8);
 
             return logFilePath;
         }
