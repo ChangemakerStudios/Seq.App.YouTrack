@@ -30,6 +30,7 @@ using Seq.Apps;
 using Seq.Apps.LogEvents;
 
 using Serilog;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Parsing;
@@ -206,7 +207,8 @@ namespace Seq.App.YouTrack
 
             string logFilePath = Path.Combine(App.StoragePath, string.Format($"SeqAppYouTrack-{issueNumber}.json"));
 
-            using (var logger = new LoggerConfiguration().WriteTo.File(new JsonFormatter(), logFilePath).CreateLogger())
+            using (var logger = new LoggerConfiguration().AuditTo.File(new JsonFormatter(), logFilePath)
+                .CreateLogger())
             {
                 logger.Write(logEvent);
             }
