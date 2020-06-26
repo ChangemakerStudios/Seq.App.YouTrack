@@ -80,27 +80,8 @@ namespace Seq.App.YouTrack
         /// <value>
         ///     The username.
         /// </value>
-        [SeqAppSetting(DisplayName = "Bearer Token", IsOptional = true, HelpText = "Use Bearer Authentication: enter the permanent token generated to authenticate against YouTrack.", InputType = SettingInputType.Password)]
+        [SeqAppSetting(DisplayName = "Bearer Token", IsOptional = false, HelpText = "Enter the permanent token generated to authenticate against YouTrack. (https://www.jetbrains.com/help/youtrack/incloud/Manage-Permanent-Token.html)", InputType = SettingInputType.Password)]
         public string BearerToken { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the username.
-        /// </summary>
-        /// <value>
-        ///     The username.
-        /// </value>
-        [SeqAppSetting(DisplayName = "Username", IsOptional = true, HelpText = "Use Username/Password Authentication: Enter Username for YouTrack.")]
-        public string Username { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the password.
-        /// </summary>
-        /// <value>
-        ///     The password.
-        /// </value>
-        [SeqAppSetting(DisplayName = "Password", IsOptional = true, HelpText = "Use Username/Password Authentication: Enter Password for YouTrack.",
-            InputType = SettingInputType.Password)]
-        public string Password { get; set; }
 
 
         /// <summary>

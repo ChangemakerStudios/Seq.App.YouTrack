@@ -172,7 +172,7 @@ namespace Seq.App.YouTrack
                 return false;
             }
 
-            CreatedIssueEvent existingIssue = null;
+            CreatedIssueEvent existingIssue;
 
             using (var repository = GetIssueRepositoryInstance())
             {
@@ -308,12 +308,7 @@ namespace Seq.App.YouTrack
                     return new BearerTokenConnection(uri.ToFormattedUrl(), this.BearerToken);
                 }
 
-                if (this.Username.IsNotSet() || this.Password.IsNotSet())
-                {
-                    throw new Exception("Username and password are required if a bearer token is not set");
-                }
-
-                return new UsernamePasswordConnection(uri.ToFormattedUrl(), this.Username, this.Password);
+                throw new Exception("Must provided permanent/bearer token authentication token");
             }
             catch (Exception ex) when (LogError(ex, "Failure Connecting to YouTrack"))
             {
