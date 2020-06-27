@@ -1,1 +1,1 @@
-﻿{{$Level}}: {{$Message}}
+﻿{{$Level}}: {{{$Message}}}

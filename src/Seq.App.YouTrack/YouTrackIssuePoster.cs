@@ -98,7 +98,9 @@ namespace Seq.App.YouTrack
 
                 issue.Summary = this._summaryTemplate.Value(payload);
                 issue.Description = this._bodyTemplate.Value(payload);
-                issue.AsDynamic().Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
+                dynamic issueDynamic = issue.AsDynamic();
+                issueDynamic.Type = this.YouTrackIssueType.IsSet() ? this.YouTrackIssueType : "Auto-reported Exception";
+                issueDynamic.IsMarkdown = true;
 
                 if (projectId.IsNotSet())
                 {

@@ -8,7 +8,7 @@ Link to Seq: [Direct Link]({{$ServerUri}}#/events?filter=@Id%3D%3D%22{{$Id}}%22)
 
 ### Message
 ```
-{{$Message}}
+{{{$Message}}}
 ```
 
 {{#if $Exception}}
