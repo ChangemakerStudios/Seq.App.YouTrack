@@ -1,23 +1,9 @@
-// Copyright 2014-2019 CaptiveAire Systems
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Seq.App.YouTrack - Copyright (c) 2022 CaptiveAire
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -31,10 +17,7 @@ using Seq.App.YouTrack.Resources;
 using Seq.Apps;
 using Seq.Apps.LogEvents;
 
-using Serilog;
-using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Formatting.Json;
 using Serilog.Parsing;
 
 using YouTrackSharp;
@@ -50,18 +33,16 @@ namespace Seq.App.YouTrack
     [SeqApp("YouTrack Issue Poster", Description = "Create a YouTrack issue from an event.")]
     public partial class YouTrackIssuePoster : SeqApp, ISubscribeToAsync<LogEventData>
     {
-        readonly Lazy<Func<object, string>> _bodyTemplate;
-        readonly Lazy<Func<object, string>> _projectIdTemplate;
-        readonly Lazy<Func<object, string>> _summaryTemplate;
+        readonly Lazy<HandlebarsTemplate<object, object>> _bodyTemplate;
+
+        readonly Lazy<HandlebarsTemplate<object, object>> _projectIdTemplate;
+
+        readonly Lazy<HandlebarsTemplate<object, object>> _summaryTemplate;
 
         static YouTrackIssuePoster()
         {
+            HandlebarsHelper blah;
             Handlebars.RegisterHelper("pretty", TemplateHelper.PrettyPrint);
-        }
-
-        CreatedIssueRepository GetIssueRepositoryInstance()
-        {
-            return new CreatedIssueRepository(this.App.StoragePath);
         }
 
         /// <summary>
@@ -69,13 +50,17 @@ namespace Seq.App.YouTrack
         /// </summary>
         public YouTrackIssuePoster()
         {
-            _summaryTemplate = new Lazy<Func<object, string>>(
-                () => Handlebars.Compile(IssueSummaryTemplate.IsSet() ? IssueSummaryTemplate : TemplateResources.DefaultIssueSummaryTemplate));
+            _summaryTemplate = new Lazy<HandlebarsTemplate<object, object>>(
+                () => Handlebars.Compile(
+                    IssueSummaryTemplate.IsSet()
+                        ? IssueSummaryTemplate
+                        : TemplateResources.DefaultIssueSummaryTemplate));
 
-            _bodyTemplate = new Lazy<Func<object, string>>(
-                () => Handlebars.Compile(IssueBodyTemplate.IsSet() ? IssueBodyTemplate : TemplateResources.DefaultIssueBodyTemplate));
+            _bodyTemplate = new Lazy<HandlebarsTemplate<object, object>>(
+                () => Handlebars.Compile(
+                    IssueBodyTemplate.IsSet() ? IssueBodyTemplate : TemplateResources.DefaultIssueBodyTemplate));
 
-            _projectIdTemplate = new Lazy<Func<object, string>>(() => Handlebars.Compile(ProjectId));
+            _projectIdTemplate = new Lazy<HandlebarsTemplate<object, object>>(() => Handlebars.Compile(ProjectId));
         }
 
         public async Task OnAsync(Event<LogEventData> @event)
@@ -133,14 +118,33 @@ namespace Seq.App.YouTrack
 
                         using (var fileStream = await json.ToStream().ConfigureAwait(false))
                         {
-                            await issueManagement.AttachFileToIssue(issueNumber, $"{issueNumber}.json", fileStream).ConfigureAwait(false);
+                            await issueManagement.AttachFileToIssue(issueNumber, $"{issueNumber}.json", fileStream)
+                                .ConfigureAwait(false);
                         }
                     }
                 }
             }
-            catch (Exception ex) when (LogError(ex, "Failure Creating Issue on YouTrack {YouTrackUrl}", GetYouTrackUri().ToFormattedUrl()))
+            catch (UnauthorizedConnectionException ex) when (LogError(
+                                                                 ex,
+                                                                 "Authorization Failed Creating Issue on YouTrack {YouTrackUrl} StatusCode: {StatusCode} Response: {@Response}",
+                                                                 GetYouTrackUri().ToFormattedUrl(),
+                                                                 ex.StatusCode,
+                                                                 ex.Response))
             {
+
             }
+            catch (Exception ex) when (LogError(
+                                           ex,
+                                           "Failure Creating Issue on YouTrack {YouTrackUrl}",
+                                           GetYouTrackUri().ToFormattedUrl()))
+            {
+
+            }
+        }
+
+        CreatedIssueRepository GetIssueRepositoryInstance()
+        {
+            return new CreatedIssueRepository(this.App.StoragePath);
         }
 
         void LogIssueCreation(Event<LogEventData> @event, string issueNumber)
@@ -203,7 +207,8 @@ namespace Seq.App.YouTrack
             return JsonConvert.SerializeObject(logEvent, Formatting.Indented);
         }
 
-        LogEventProperty CreateProperty(string name, object value) => new LogEventProperty(name, CreatePropertyValue(value));
+        LogEventProperty CreateProperty(string name, object value) =>
+            new LogEventProperty(name, CreatePropertyValue(value));
 
         LogEventPropertyValue CreatePropertyValue(object value)
         {
@@ -240,20 +245,20 @@ namespace Seq.App.YouTrack
                 (@event.Data.Properties ?? new Dictionary<string, object>()).ToDynamic() as IDictionary<string, object>;
 
             var payload = new Dictionary<string, object>
-                {
-                    { "$Id", @event.Id },
-                    { "$UtcTimestamp", @event.TimestampUtc },
-                    { "$LocalTimestamp", @event.Data.LocalTimestamp },
-                    { "$Level", @event.Data.Level },
-                    { "$MessageTemplate", @event.Data.MessageTemplate },
-                    { "$Message", HttpUtility.HtmlDecode(@event.Data.RenderedMessage) },
-                    { "$Exception", @event.Data.Exception },
-                    { "$Properties", properties },
-                    { "$EventType", $"${@event.EventType:X8}" },
-                    { "$Instance", this.Host.InstanceName },
-                    { "$ServerUri", Host.BaseUri },
-                    { "$YouTrackProjectId", this.ProjectId }
-                }.ToDynamic() as IDictionary<string, object>;
+            {
+                { "$Id", @event.Id },
+                { "$UtcTimestamp", @event.TimestampUtc },
+                { "$LocalTimestamp", @event.Data.LocalTimestamp },
+                { "$Level", @event.Data.Level },
+                { "$MessageTemplate", @event.Data.MessageTemplate },
+                { "$Message", HttpUtility.HtmlDecode(@event.Data.RenderedMessage) },
+                { "$Exception", @event.Data.Exception },
+                { "$Properties", properties },
+                { "$EventType", $"${@event.EventType:X8}" },
+                { "$Instance", this.Host.InstanceName },
+                { "$ServerUri", Host.BaseUri },
+                { "$YouTrackProjectId", this.ProjectId }
+            }.ToDynamic() as IDictionary<string, object>;
 
             foreach (var property in properties)
             {

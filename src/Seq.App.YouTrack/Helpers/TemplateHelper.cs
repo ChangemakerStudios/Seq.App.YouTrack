@@ -28,7 +28,7 @@ namespace Seq.App.YouTrack.Helpers
     /// </summary>
     public static class TemplateHelper
     {
-        public static void PrettyPrint(TextWriter output, object context, object[] arguments)
+        public static void PrettyPrint(EncodedTextWriter output, Context context, Arguments arguments)
         {
             var value = arguments.FirstOrDefault();
 
