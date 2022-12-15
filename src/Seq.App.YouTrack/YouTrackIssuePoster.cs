@@ -41,7 +41,6 @@ namespace Seq.App.YouTrack
 
         static YouTrackIssuePoster()
         {
-            HandlebarsHelper blah;
             Handlebars.RegisterHelper("pretty", TemplateHelper.PrettyPrint);
         }
 
