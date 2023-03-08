@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>3.0.0.0</Version>
+    <Version>4.0.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -13,18 +13,18 @@
     <PackageProjectUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CaptiveAire/Seq.App.YouTrack</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Seq v5.1+ Only! Updated to YouTrack API Client (2021.3.0) that supports Bearer Auth/Permanent Tokens Only.</PackageReleaseNotes>
+    <PackageReleaseNotes>Seq v5.1+ Only! Updated to YouTrack API Client (2022.3.0) that supports Bearer Auth/Permanent Tokens Only -- may not be backwards compatible.</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageTags>seq-app youtrack</PackageTags>    
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="EmbeddedResourceLoader" Version="2.0.0" />
-    <PackageReference Include="Handlebars.Net" Version="2.1.2" />
-    <PackageReference Include="JsonFlatFileDataStore" Version="2.3.0" />
+    <PackageReference Include="Handlebars.Net" Version="2.1.4" />
+    <PackageReference Include="JsonFlatFileDataStore" Version="2.4.1" />
     <PackageReference Include="Seq.Apps" Version="2021.4.0" />
     <PackageReference Include="Serilog" Version="2.12.0" />
-    <PackageReference Include="YouTrackSharp" Version="2021.3.6" />
+    <PackageReference Include="YouTrackSharp" Version="2022.3.0" />
   </ItemGroup>
   
   <ItemGroup>

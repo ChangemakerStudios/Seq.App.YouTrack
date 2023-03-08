@@ -1,5 +1,5 @@
 ﻿image: Visual Studio 2019
-version: 3.0.{build}
+version: 4.0.{build}
 platform: "Any CPU"
 configuration: Release
 
@@ -7,7 +7,7 @@ configuration: Release
 # - nuget restore
 
 build_script:
-  - cmd: PowerShell -Version 3.0 .\build.ps1 %APPVEYOR_BUILD_VERSION%
+  - cmd: PowerShell -Version 4.0 .\build.ps1 %APPVEYOR_BUILD_VERSION%
 
 after_build:
   - appveyor PushArtifact artifacts\Seq.App.YouTrack.%APPVEYOR_BUILD_VERSION%.nupkg
